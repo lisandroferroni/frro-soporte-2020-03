@@ -13,7 +13,8 @@ class Persona:
     def edad(self):
         return int((datetime.datetime.now() - self.nacimiento).days / 365.25)
 
+
 """
-persona = Persona(datetime.datetime(1995, 3, 24))
+persona = Persona(datetime.datetime(1995, 4, 3))
 print(str(persona.edad()))
 """

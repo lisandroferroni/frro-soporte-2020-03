@@ -27,12 +27,15 @@ class Estudiante(Persona):
     def edad_ingreso(self):
         return self.edad - (datetime.datetime.now().year - self.anio)
 
+    def print_data(self):
+        super().print_data()
+        print("Carrera: " + self.carrera + "\nAño: " + str(self.anio) +
+            "\nCantidad de materias: " + str(self.cantidad_materias) + "\nCantidad de aprobadas: " + str(self.cantidad_aprobadas))
 
-"""
-estudiante = Estudiante("ISI", 2015, 50, 10, "Juan Diaz", 22, "H", 72, 1.73)
+
+estudiante = Estudiante("ISI", 2015, 50, 10, "Juan Diaz", 23, "H", 72, 1.73)
+assert estudiante.avance() == 20
+assert estudiante.edad_ingreso() == 18
+
 estudiante.print_data()
-print("Cantidad materias: " + str(estudiante.cantidad_materias) +
-       "\nCantidad aprobadas: " + str(estudiante.cantidad_aprobadas) +
-       "\nPorcentaje aprobadas: %" + str(estudiante.avance()) +
-       "\nEdad de ingreso: " + str(estudiante.edad_ingreso()))
-"""
+
