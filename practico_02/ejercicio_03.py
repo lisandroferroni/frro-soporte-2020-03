@@ -33,7 +33,7 @@ class Persona:
         print("Nombre: " + self.nombre + "\nEdad: " + str(self.edad) +
               "\nSexo: " + str(self.sexo) + "\nPeso: " + str(self.peso) +
               "\nAltura: " + str(self.altura) +
-              "\nDni: " + str(self.dni))
+              "\nDNI: " + str(self.dni))
 
 """
 persona = Persona("Juan Diaz", 22, "H", 72, 1.73)

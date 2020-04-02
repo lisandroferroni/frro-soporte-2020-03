@@ -27,11 +27,11 @@ def organizar_estudiantes(estudiantes):
     return diccionario
 
 
-estudiantes = [Estudiante("ISI", 2, 50, 15, "Juan Diaz", 21, "H", 72, 1.73),
-               Estudiante("ISI", 1, 50, 1, "Carlos", 20, "H", 72, 1.73),
-               Estudiante("Quimica", 4, 60, 15, "Maria", 25, "M", 72, 1.73),
-               Estudiante("Quimica", 4, 60, 20, "Sol", 26, "M", 72, 1.73),
-               Estudiante("ISI", 4, 50, 5, "Pedro", 22, "H", 72, 1.73)]
+estudiantes = [Estudiante("ISI", 2015, 50, 15, "Juan Diaz", 21, "H", 72, 1.73),
+               Estudiante("ISI", 2019, 50, 1, "Carlos", 20, "H", 72, 1.73),
+               Estudiante("Quimica", 2016, 60, 15, "Maria", 25, "M", 72, 1.73),
+               Estudiante("Quimica", 2016, 60, 20, "Sol", 26, "M", 72, 1.73),
+               Estudiante("ISI", 2016, 50, 5, "Pedro", 22, "H", 72, 1.73)]
 """
 diccionario = organizar_estudiantes(estudiantes)
 for key in diccionario:

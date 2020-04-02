@@ -8,31 +8,8 @@
 # - avance(): indica que porcentaje de la carrera tiene aprobada.
 # - edad_ingreso(): indica que edad tenia al ingresar a la carrera (basándose en el año actual).
 from random import randint
-
-
-class Persona:
-
-    def __init__(self, nombre, edad, sexo, peso, altura):
-        self.nombre = nombre
-        self.edad = edad
-        self.sexo = sexo
-        self.peso = peso
-        self.altura = altura
-        self.dni = self.generar_dni()
-
-    def es_mayor_edad(self):
-        return self.edad >= 18
-
-    # llamarlo desde __init__
-    def generar_dni(self):
-        return randint(10000000, 100000000)
-
-    def print_data(self):
-        print("Nombre: " + self.nombre + "\nEdad: " + str(self.edad) +
-              "\nSexo: " + str(self.sexo) + "\nPeso: " + str(self.peso) +
-              "\nAltura: " + str(self.altura) +
-              "\nDni: " + str(self.dni))
-
+from practico_02.ejercicio_03 import Persona
+import datetime
 
 class Estudiante(Persona):
 
@@ -48,10 +25,11 @@ class Estudiante(Persona):
 
     # implementar usando modulo datetime
     def edad_ingreso(self):
-        return self.edad - self.anio
+        return self.edad - (datetime.datetime.now().year - self.anio)
+
 
 """
-estudiante = Estudiante("ISI", 4, 50, 10, "Juan Diaz", 22, "H", 72, 1.73)
+estudiante = Estudiante("ISI", 2015, 50, 10, "Juan Diaz", 22, "H", 72, 1.73)
 estudiante.print_data()
 print("Cantidad materias: " + str(estudiante.cantidad_materias) +
        "\nCantidad aprobadas: " + str(estudiante.cantidad_aprobadas) +

@@ -8,7 +8,7 @@ class Circulo:
         self.radio = radio
 
     def area(self):
-        return 3.14 * pow(self.radio, 2)
+        return int(math.pi * pow(self.radio, 2))
 
     def perimetro(self):
         return int(math.pi * self.radio * 2)
@@ -16,4 +16,4 @@ class Circulo:
 
 circulo = Circulo(10)
 assert circulo.area() == 314
-assert circulo.perimetro() == int(62.8)
+assert circulo.perimetro() == 62
