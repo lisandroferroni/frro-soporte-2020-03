@@ -4,8 +4,7 @@
 
 # Resolver sin utilizar lista auxiliar
 def numeros_al_final(lista):
-    lista.sort(reverse=True)
-    return lista
+    return sorted(lista, reverse=True)
 
 
 lista = ['a', '9', 'b', '4']

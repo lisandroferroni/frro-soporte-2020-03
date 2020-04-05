@@ -13,10 +13,10 @@ def superposicion_loop(lista_1, lista_2):
 
 # se debe implementar utilizando conjuntos (sets).
 def superposicion_set(lista_1, lista_2):
-    return lista_1.intersection(lista_2)
+    return set(lista_1).intersection(set(lista_2))
 
 
 assert superposicion_loop(['a', 's', 'd'], ['q', 's', 'e'])
-assert superposicion_set(set(['a', 's', 'd']), set(['q', 's', 'e']))
+assert superposicion_set(['a', 's', 'd'], ['q', 's', 'e'])
 assert not superposicion_loop(['a', 's', 'd'], ['q', 'w', 'e'])
-assert not superposicion_set(set(['a', 's', 'd']), set(['q', 'w', 'e']))
+assert not superposicion_set(['a', 's', 'd'], ['q', 'w', 'e'])

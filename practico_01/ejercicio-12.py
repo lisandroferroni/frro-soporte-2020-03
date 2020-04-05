@@ -3,10 +3,6 @@
 
 
 def suma(N):
-    sumatoria = 0
-    for x in range (1, N):
-        sumatoria += x
-    return sumatoria
-
+    return sum(list(range(1, N+1)))
 
 print(suma(int(input())))

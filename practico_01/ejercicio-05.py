@@ -4,12 +4,9 @@
 
 # Resolver utilizando listas y el operador in.
 def es_vocal(letra):
-    vocales = ['a', 'e', 'i', 'o', 'u']
-    for vocal in vocales:
-        if letra == vocal:
-            return 1
-    return 0
+    return letra.lower() in 'aeiou'
 
 
 assert es_vocal('i')
 assert not es_vocal('b')
+assert es_vocal('A')

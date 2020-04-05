@@ -7,12 +7,10 @@
 def operacion(a, b, multiplicar):
     if multiplicar:
         return a * b
-    else:
-        if b == 0:
-            print("Operacion no valida")
-            return 0
-        else:
-            return a / b
+    if b == 0:
+        print("Operacion no valida")
+        return 0
+    return a / b
 
 
 assert operacion(5, 2, 1) == 10

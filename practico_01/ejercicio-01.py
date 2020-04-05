@@ -4,10 +4,8 @@
 def maximo(a, b):
     if a > b:
         return a
-    else:
-        return b
+    return b
 
 # si no falla es porque esta bien
 assert maximo(10, 5) == 10
 assert maximo(9, 18) == 18
-print("ok")
