@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<title>{% block title %}{% endblock %} - Cuando llegó</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
+<section class="content">
+    <header>
+        <nav class="flex items-center justify-between flex-wrap bg-teal-500 p-6">
+            <div class="flex items-center flex-shrink-0 text-white mr-6">
+                <img class="header__logo" src="{{ url_for('static', filename='bus.svg') }}" width="54" height="54">
+                <span class="font-semibold text-xl tracking-tight">Cuando llegó</span>
+            </div>
+        </nav>
+    </header>
+    <div class="content">
+        <div class="container mx-auto px-4 py-16">
+            <div class="py-12">{% block precontent %}{% endblock %}</div>
+            <ul class="flex border-b">
+                <li class="-mb-px mr-1">
+                    <a class="bg-white inline-block border-l border-t border-r rounded-t py-2 px-4 text-blue-700 font-semibold" href="#">Paradas de colectivo</a>
+                </li>
+                <li class="mr-1">
+                    <a class="bg-white inline-block py-2 px-4 text-blue-500 hover:text-blue-800 font-semibold" href="#">Líneas</a>
+                </li>
+                <li class="mr-1">
+                    <a class="bg-white inline-block py-2 px-4 text-blue-500 hover:text-blue-800 font-semibold" href="#">Días</a>
+                </li>
+                <li class="mr-1">
+                    <a class="bg-white inline-block py-2 px-4 text-blue-500 hover:text-blue-800 font-semibold" href="#">Cuándo llega</a>
+                </li>
+            </ul>
+            <div class="py-12">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+</section>
