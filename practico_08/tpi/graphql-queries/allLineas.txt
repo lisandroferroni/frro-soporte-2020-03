@@ -1,0 +1,15 @@
+query{
+  lineas{
+    uuid
+    name
+    paradas{
+      edges{
+        node{
+          uuid
+    			idCallePpal
+    			idCalleCruce
+        }
+      }
+    }
+  }
+}

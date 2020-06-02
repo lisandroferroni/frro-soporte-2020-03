@@ -1,0 +1,19 @@
+query{
+  allParadas{
+    edges{
+      node{
+        uuid
+        idCallePpal
+        idCalleCruce
+        lineas{
+          edges{
+            node{
+              uuid
+              name
+            }
+          }
+        }
+      }
+    }
+  }
+}
