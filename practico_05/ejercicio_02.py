@@ -119,13 +119,6 @@ def pruebas():
     datos.borrar_todos()
     assert len(datos.todos()) == 0
 
-"""
-datos = DatosSocio()
-datos.session.query(Socio).delete()
-
-for instance in datos.session.query(Socio).all():
-    print (instance)
-"""
 
 if __name__ == '__main__':
     pruebas()
