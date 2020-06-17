@@ -93,8 +93,8 @@ class Win2:
 
 
 def btnAgregar_click(window, nombre, apellido, dni, item = False):
-    item_selected = app.treeview.item(item)
     if (item): #Caso edición
+        item_selected = app.treeview.item(item)
         app.treeview.delete(item)
         socio_modif = Socio(id=item_selected["text"], dni=dni, nombre=nombre, apellido=apellido)
         app.negocio.modificacion(socio_modif)
