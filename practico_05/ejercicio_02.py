@@ -48,7 +48,13 @@ class DatosSocio(object):
         Devuelve True si el borrado fue exitoso.
         :rtype: bool
         """
-        return self.session.query(Socio).delete()
+        try:
+            self.session.query(Socio).delete()
+            self.session.commit()
+        except:
+            return False
+        else:
+            return True
 
     def alta(self, socio):
         """
@@ -67,7 +73,13 @@ class DatosSocio(object):
         Devuelve True si el borrado fue exitoso.
         :rtype: bool
         """
-        return self.session.query(Socio).filter_by(id=id_socio).delete()
+        try:
+            self.session.query(Socio).filter_by(id=id_socio).delete()
+            self.session.commit()
+        except:
+            return False
+        else:
+            return True
 
     def modificacion(self, socio):
         """
