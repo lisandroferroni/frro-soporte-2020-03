@@ -74,7 +74,8 @@ class DatosSocio(object):
         :rtype: bool
         """
         try:
-            self.session.query(Socio).filter_by(id=id_socio).delete()
+            socio_delete = self.session.query(Socio).get(id_socio)
+            self.session.delete(socio_delete)
             self.session.commit()
         except:
             return False
