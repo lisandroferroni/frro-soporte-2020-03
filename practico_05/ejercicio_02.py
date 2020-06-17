@@ -33,7 +33,7 @@ class DatosSocio(object):
         Devuelve None si no encuentra nada.
         :rtype: Socio
         """
-        return self.session.query(Socio).filter(Socio.dni == dni_socio).first()
+        return self.session.query(Socio).filter(Socio.dni == dni_socio).one_or_none()
 
     def todos(self):
         """
