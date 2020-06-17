@@ -90,11 +90,11 @@ class DatosSocio(object):
         :rtype: Socio
         """
         socio_a_modificar = self.session.query(Socio).get(socio.id)
+        if socio_a_modificar is None:
+            return None
         socio_a_modificar = socio
         self.session.commit()
         return socio
-
-
 
 def pruebas():
     # alta
