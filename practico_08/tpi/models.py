@@ -1,36 +1,46 @@
 from sqlalchemy import Column, Table, Integer, ForeignKey, String
-from sqlalchemy.orm import relationship, backref, sessionmaker
-from database import Base, engine
+from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
+import json
+
+Base = declarative_base()
 
 class CalleModel(Base):
     __tablename__ = 'calle'
     uuid = Column('IdCalle', Integer, primary_key=True)
-    name = Column('Nombre', String(15))
+    name = Column('Nombre', String(100))
     def __str__(self):
         return self.name
 
+lineas_paradas_table = Table('lineas_paradas', Base.metadata,
+    Column('linea_id', Integer, ForeignKey('linea.id')),
+    Column('parada_id', Integer, ForeignKey('parada.id'))
+)
+
 class LineaModel(Base):
     __tablename__ = 'linea'
-    uuid = Column('IdLinea', Integer, primary_key=True)
-    name = Column('Nombre', String(15))
-    paradas = relationship("ParadaModel", secondary="lineaparada", back_populates="lineas")
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100))
+    paradas = relationship("ParadaModel", secondary=lineas_paradas_table, back_populates="lineas")
 
 class ParadaModel(Base):
     __tablename__ = 'parada'
-    uuid = Column('IdParada', Integer, primary_key=True)
-    id_calle_ppal = Column('IdCallePpal', Integer)
-    id_calle_cruce = Column('IdCalleCruce', Integer)
-    lineas = relationship("LineaModel", secondary="lineaparada", back_populates="paradas")
-
-class LineaParada(Base):
-    __tablename__ = 'lineaparada'
-    id_linea = Column('IdLinea', Integer, ForeignKey('linea.IdLinea'), primary_key=True)
-    id_parada = Column('IdParada', Integer, ForeignKey('parada.IdParada'), primary_key=True)
-    #linea = relationship(LineaModel, backref=backref("LineaParadas", cascade="all, delete-orphan"))
-    #parada = relationship(ParadaModel, backref=backref("LineaParadas", cascade="all, delete-orphan"))
+    id = Column(Integer, primary_key=True)
+    id_calle_ppal = Column(Integer)
+    id_calle_cruce = Column(Integer)
+    lineas = relationship("LineaModel", secondary=lineas_paradas_table, back_populates="paradas")
 
 ##Data
+"""
+db_session = sessionmaker()
+session = db_session()
+with open('../1lineas.json') as json_file:
+    data = json.load(json_file)
+    for l in data['0']:
+        print('Name: ' + l['txt']+" "+l['attrs']['idlinea'])
+        session.add(LineaModel(uuid=l['attrs']['idlinea'], name=l['txt']))
+session.commit()
+"""
 '''
 c1 = CalleModel(uuid = 1, name = "Santa Fe")
 c2 = CalleModel(uuid = 2, name = "Oroño")
@@ -62,4 +72,3 @@ class ArticleModel(Base):
     uuid = Column(Integer, primary_key=True)
     person_id = Column(ForeignKey("person.uuid"))
 '''
-Base.prepare(engine)

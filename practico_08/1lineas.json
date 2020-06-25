@@ -2,12 +2,6 @@
     "0": [
         {
             "attrs": {
-                "value": "0"
-            },
-            "txt": "Seleccionar.."
-        },
-        {
-            "attrs": {
                 "value": "101",
                 "idlinea": "37",
                 "identidad": "146"

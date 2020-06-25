@@ -1,0 +1,25 @@
+{% set active_page = "paradas-de-colectivo" %}
+{% extends "base.html" %}
+
+{% block header %}
+  <h1>{% block title %}Paradas de colectivo{% endblock %}</h1>
+{% endblock %}
+
+{% block precontent %}
+    <h2 class="text-center text-5xl text-teal-500">Paradas de colectivo - Cuando llegó</h2>
+    <!--<h2 class="text-center text-2xl text-teal-500">Informes por lineas de colectivo</h2>-->
+{% endblock %}
+
+{% block content %}
+<h3 class="text-4xl text-black-500 mb-5">Introducción</h3>
+<p class="mb-4">El objetivo seleccionado para el trabajo práctico integrador establecido por la Cátedra de Soporte a la Gestión deDatos con Programación Visual es el desarrollo de un sistema que permite al usuario obtener reportes y gráficos acercadel funcionamiento del transporte urbano de pasajeros de la ciudad de Rosario.</p>
+<p class="mb-4">El lenguaje de programación para construirlo es Python 3.x, respetando el modelo de capas. Se utilizará una basede datos diseñada en MySQL, mediante el ORM llamado SQLAlchemy. Se utilizará la librería GraphQL de Pythonllamada Graphene. Para el servidor web se seleccionó Flask como framework de aplicación web.</p>
+
+<h3 class="text-4xl text-black-500 mb-5">Información</h3>
+<p class="mb-4">Parte de la información para el desarrollo del sistema es obtenida desde el sitio web del sistema "¿Cuándo llega?" dela Municipalidad de Rosario. A partir del mismo se pueden identificar todas las líneas de colectivo que se encuentranactivas en la ciudad, junto con sus recorridos, paradas identificadas por intersecciones de calles y horarios que debencumplir las unidades.</p>
+<p class="mb-4">Toda esta información es recopilada desde el código HTML que se inspecciona cuando se visita el sitio del ETR(Ente de la Movilidad de Rosario). Se monitorizan las peticiones HTTP que realiza el mismo al interactuar con losselectores del formulario y se comprende la estructura de la información disponible públicamente. Esta se almacenarála base de datos del sistema, previamente diseñada con tablas relacionadas que harán posible las diferentes consultaspara generar reportes que se detallarás más adelante.</p>
+<p class="mb-4">Para completar la información necesaria para cumplir con los objetivos del sistema a desarrollar, es necesario conocerla cantidad de pasajeros que ascienden en cada parada a cada unidad, y en qué momento. Esto nos permitirá estimar ladensidad de personas en los colectivos, y a partir de allí continuar con el análisis establecido por el trabajo. Dichosdatos pueden ser obtenidos mediante una fuente interna de la municipalidad, ya que han sido medidos en el pasado paradeterminadas unidades la cantidad de boletos que se marcan a lo largo del recorrido. En caso de no contar con estafuente, se procederá a simular los datos.</p>
+
+<h3 class="text-4xl text-black-500 mb-5">Reportes</h3>
+<p class="mb-4">Se confeccionarán reportes en forma de gráficos con el objetivo de visualizar diferentes características sobre elfuncionamiento del sistema de transporte, y a partir de allí analizar posibles medidas para la optimización del servicio.Se le permitirá al usuario ingresar los parámetros mediante los cuales se crearán las consultas a la base de datos medianteGraphQL, tales como el área geográfica para conocer la densidad de pasajeros por barrio, franja horaria, días de lasemana, líneas de colectivo, etc. Los mismos podrán ser utilizados para auditar el servicio, destacar qué zonas de laciudad tienen mayor flujo de pasajeros, detectar cuándo la demanda excede la oferta, estimar el horario en el que pasaun colectivo por una parada sin servicio de GPS, entre otros.</p>
+{% endblock %}
