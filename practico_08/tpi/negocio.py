@@ -101,7 +101,7 @@ def altas():
                 lineaObj = LineaModel( id=int(json["id"]), name=json['nombre'])
                 linea = negocioL.alta( lineaObj )
                 for p in json["paradas"]:
-                    paradaObj = ParadaModel(id=p["id"], id_calle_ppal=0, id_calle_cruce=0)
+                    paradaObj = ParadaModel(id=int(p["id"]), id_calle_ppal=0, id_calle_cruce=0)
                     parada = negocioP.alta(paradaObj)
                     negocioL.lineas.append_parada(lineaObj, paradaObj)
             except Exception as e:

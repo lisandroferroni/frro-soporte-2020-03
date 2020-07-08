@@ -17,14 +17,14 @@ class Query(graphene.ObjectType):
     paradas = graphene.List(Parada)
     all_lineas = SQLAlchemyConnectionField(Linea)
     all_paradas = SQLAlchemyConnectionField(Parada)
-    linea = graphene.Field(Linea, uuid = graphene.Int())
+    linea = graphene.Field(Linea, id = graphene.Int())
     def resolve_lineas(self, info):
         query = Linea.get_query(info)  # SQLAlchemy query
         return query.all()
     def resolve_linea(self, info, **args):
         query = Linea.get_query(info)
-        uuid = args.get('uuid')
-        return query.get(uuid)
+        id = args.get('id')
+        return query.get(id)
 
 
 
