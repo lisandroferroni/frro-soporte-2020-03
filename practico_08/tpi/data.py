@@ -1,4 +1,4 @@
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, scoped_session
 from practico_08.tpi.database import engine
 from practico_08.tpi.models import LineaModel, ParadaModel, Base
 import json
@@ -6,8 +6,10 @@ import requests
 
 Base.metadata.create_all(engine)
 Base.metadata.bind = engine
-db_session = sessionmaker()
-db_session.bind = engine
+db_session = scoped_session(sessionmaker(autocommit=False,
+                                         autoflush=False,
+                                         bind=engine))
+Base.query = db_session.query_property()
 session = db_session()
 
 class DatosLinea(object):
