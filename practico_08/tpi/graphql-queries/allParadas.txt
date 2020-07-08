@@ -2,13 +2,13 @@ query{
   allParadas{
     edges{
       node{
-        uuid
+        id
         idCallePpal
         idCalleCruce
         lineas{
           edges{
             node{
-              uuid
+              id
               name
             }
           }
