@@ -11,8 +11,12 @@
 {% endblock %}
 
 {% block content %}
-<a href="#" id="calculate">get</a>
-<pre id="rtaAJAX"></pre>
+<button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" id="paradas">
+Paradas
+</button>
+<button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" id="lineas">
+Lineas
+</button>
 <h3 class="text-4xl text-black-500 mb-5">Introducción</h3>
 <canvas id="myChart" width="400" height="400"></canvas>
 
@@ -244,8 +248,9 @@ window.onload = function() {
 </script>
 <script type=text/javascript>
 $(function() {
-    $('a#calculate').bind('click', function() {
+    $('button#paradas').bind('click', function() {
         var graphQ = `{ lineas{ id name paradas{ edges{ node{ id idCallePpal idCalleCruce } } } } }`
+        $('#query').text(graphQ)
         $.ajax({
             type : 'GET',
             url: $SCRIPT_ROOT + '/graphql',
@@ -254,7 +259,25 @@ $(function() {
             },
             success: function(data){
                 console.log(data)
-                $("#rtaAJAX").text(JSON.stringify(data.data, null, 2));
+                $('#response').text(JSON.stringify(data.data, null, 2))
+            },//success
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                console.log( "Request failed: " + textStatus + " "+ errorThrown );
+            }//error
+        });//$ajax
+    });
+    $('button#lineas').bind('click', function() {
+        var graphQ = `query{ lineas{ id name paradas{ edges{ node{ id idCallePpal idCalleCruce } } } } }`
+        $('#query').text(graphQ)
+        $.ajax({
+            type : 'GET',
+            url: $SCRIPT_ROOT + '/graphql',
+            data: {
+                query: graphQ
+            },
+            success: function(data){
+                console.log(data)
+                $('#response').text(JSON.stringify(data.data, null, 2))
             },//success
             error: function(XMLHttpRequest, textStatus, errorThrown) {
                 console.log( "Request failed: " + textStatus + " "+ errorThrown );
