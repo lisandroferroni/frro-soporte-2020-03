@@ -1,19 +1,22 @@
 from flask import Flask, render_template
 
-from database import db_session
+from data import db_session
 from flask_graphql import GraphQLView
 from schema import schema
+from sqlalchemy.orm import scoped_session
+
+Session = scoped_session(db_session)
 
 app = Flask(__name__)
 app.debug = True
 app.env = 'development'
 app.templates_auto_reload = True
 
-app.add_url_rule('/graphql', view_func=GraphQLView.as_view('graphql', schema=schema, graphiql=True, context={'session': db_session}))
+app.add_url_rule('/graphql', view_func=GraphQLView.as_view('graphql', schema=schema, graphiql=True, context={'session': Session}))
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):
-    db_session.remove()
+    Session.remove()
 
 @app.route('/')
 def r_home():
