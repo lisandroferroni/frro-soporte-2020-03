@@ -29,9 +29,21 @@ class DatosLinea(object):
         return linea
 
     def append_parada(self, linea, parada):
-        linea.paradas.append(parada)
-        self.session.commit()
-        return
+        try:
+            print("Appending ", parada.id, " to ", linea.id)
+            #Search for existing parada. Add new instance gave ReferenceError
+            pM = DatosParada()
+            p = pM.buscar(parada.id)
+            if p is None:
+                p = parada
+            linea.paradas.append(p)
+            self.session.commit()
+        except Exception as e:
+            print("Error appending ", e)
+            print("Rolling back append")
+            self.session.rollback()
+        finally:
+            return
 
     def borrar_todos(self):
         """
@@ -71,9 +83,26 @@ class DatosParada(object):
         :type linea: Linea
         :rtype: Linea
         """
-        self.session.add(parada)
-        self.session.commit()
-        return parada
+        try:
+            self.session.add(parada)
+            self.session.commit()
+        except:
+            print("Rolling back")
+            self.session.rollback()
+        finally:
+            return parada
+
+    def append_lineas(self, parada, linea):
+        try:
+            print("Appending ", linea.id, " to ", parada.id)
+            parada.lineas.append(linea)
+            self.session.commit()
+        except Exception as e:
+            print("Error appending ", e)
+            print("Rolling back append")
+            self.session.rollback()
+        finally:
+            return
 
     def borrar_todos(self):
         """
@@ -123,21 +152,6 @@ def altas():
                 linea = datosL.alta( LineaModel( id=int(l['attrs']['idlinea']), name=l['txt']) )
                 print(linea)
     """
-    #GET
-    for i in range(96):
-        if i+1 != 39 and i+1 != 41 and i+1 != 42:
-            r = requests.get('https://ws.rosario.gob.ar/ubicaciones/public/linea/1/'+str(i+1)+'?conGeometria=true&usarCoordenadasWGS84=true&conParadas=true')
-            try:
-                json = r.json()
-                print(i+1, json["nombre"], json["paradas"][0])
-                linea = datosL.alta( LineaModel( id=int(json["id"]), name=json['nombre']) )
-                print(linea)
-                for p in json["paradas"]:
-                    parada = datosP.alta(ParadaModel(id=p["id"], id_calle_ppal=0, id_calle_cruce=0))
-                    datosL.append_parada(linea, parada)
-            except Exception as e:
-                print(e)
-                print(i+1, " NOT AVAILABLE")
 
 if __name__ == '__main__':
     altas()
