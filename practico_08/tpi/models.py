@@ -30,8 +30,6 @@ class LineaModel(Base):
 class ParadaModel(Base):
     __tablename__ = 'parada'
     id = Column(Integer, primary_key=True)
-    id_calle_ppal = Column(Integer)
-    id_calle_cruce = Column(Integer)
     lineas = relationship("LineaModel", secondary=lineas_paradas_table, back_populates="paradas")
     #lineas = relationship("LineaParadaModel", secondary="lineas_paradas")
 
@@ -54,3 +52,4 @@ class InterseccionModel(Base):
     id_linea = Column(Integer, ForeignKey('linea.id'), primary_key=True)
     id_calle_1 = Column(Integer, ForeignKey('calle.id'), primary_key=True)
     id_calle_2= Column(Integer, ForeignKey('calle.id'), primary_key=True)
+    id_parada= Column(Integer, ForeignKey('parada.id'))

@@ -188,7 +188,7 @@ def altas():
 
     """
     linea = datosL.alta(LineaModel(id=1,name="115"))
-    parada = datosP.alta(ParadaModel(id=1,id_calle_ppal=2, id_calle_cruce=3))
+    parada = datosP.alta(ParadaModel(id=1))
     datosL.append_parada(linea, parada)
     """
     """

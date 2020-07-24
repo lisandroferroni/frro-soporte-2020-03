@@ -2,6 +2,7 @@ from practico_08.tpi.models import LineaModel, ParadaModel, CalleModel, Intersec
 from practico_08.tpi.data import DatosLinea, DatosParada, DatosCalle, DatosInterseccion
 import requests
 from lxml import etree
+from bs4 import BeautifulSoup
 
 class LineaExistente(Exception):
     def __str__(self):
@@ -216,11 +217,22 @@ def altas():
                             try:
                                 calleObj = CalleModel(id=int(inter["id"]), nombre=inter["desc"])
                                 negocioC.alta(calleObj)
+                            except Exception as e:
+                                print("Creating calle error:", e)
+                            try:
+                                #Vínculo intersección - parada
+                                i_p = requests.post('http://www.emr.gov.ar/ajax/cuandollega/getInfoParadas.php',
+                                    data = {'accion':'getParadasXCalles', 'idLinea': cllego_emr[json["codigoEMR"]], 'idCalle': int(calle["id"]),'txtLinea': json["codigoEMR"], 'idInt': int(inter["id"])})
+                                soup = BeautifulSoup(i_p.text,'lxml')
+                                anchors = soup.find_all('a')
+                                if(len(anchors) > 0):
+                                    id_a_parada = anchors[0].text
+                                else:
+                                    id_a_parada = 0
                                 #Intersección
                                 print("Agregando intersección.")
-                                interObj = InterseccionModel(id_linea=int(json["id"]), id_calle_1=int(calle["id"]), id_calle_2=int(inter["id"]))
+                                interObj = InterseccionModel(id_linea=int(json["id"]), id_calle_1=int(calle["id"]), id_calle_2=int(inter["id"]), id_parada=int(id_a_parada))
                                 negocioI.alta(interObj)
-                                #Vínculo intersección - parada
                             except Exception as e:
                                 print("Creating intersección error:", e)
                     except Exception as e:
@@ -230,7 +242,7 @@ def altas():
                 linea = negocioL.alta( lineaObj )
                 for p in json["paradas"]:
                     try:
-                        paradaObj = ParadaModel(id=int(p["id"]), id_calle_ppal=0, id_calle_cruce=0)
+                        paradaObj = ParadaModel(id=int(p["id"]))
                     except Exception as e:
                         print("Creating Parada ", e)
                     finally:
