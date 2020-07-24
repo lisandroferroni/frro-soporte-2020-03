@@ -6,13 +6,6 @@ import json
 
 Base = declarative_base()
 
-class CalleModel(Base):
-    __tablename__ = 'calle'
-    uuid = Column('IdCalle', Integer, primary_key=True)
-    name = Column('Nombre', String(100))
-    def __str__(self):
-        return self.name
-
 lineas_paradas_table = Table('lineas_paradas', Base.metadata,
     Column('linea_id', Integer, ForeignKey('linea.id'), primary_key=True),
     Column('parada_id', Integer, ForeignKey('parada.id'), primary_key=True),
@@ -48,3 +41,16 @@ class BoletoModel(Base):
     id_linea = Column(Integer, ForeignKey('lineas_paradas.linea_id'))
     id_parada = Column(Integer, ForeignKey('lineas_paradas.parada_id'))
     created_date = Column(DateTime, default=datetime.datetime.utcnow)
+
+class CalleModel(Base):
+    __tablename__ = 'calle'
+    id = Column(Integer, primary_key=True)
+    nombre = Column(String(100))
+    def __str__(self):
+        return self.nombre
+
+class InterseccionModel(Base):
+    __tablename__ = 'linea_interseccion'
+    id_linea = Column(Integer, ForeignKey('linea.id'), primary_key=True)
+    id_calle_1 = Column(Integer, ForeignKey('calle.id'), primary_key=True)
+    id_calle_2= Column(Integer, ForeignKey('calle.id'), primary_key=True)

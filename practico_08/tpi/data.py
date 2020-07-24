@@ -1,6 +1,6 @@
 from sqlalchemy.orm import sessionmaker, scoped_session
 from practico_08.tpi.database import engine
-from practico_08.tpi.models import LineaModel, ParadaModel, Base
+from practico_08.tpi.models import LineaModel, ParadaModel, CalleModel, InterseccionModel, Base
 import json
 import requests
 
@@ -11,6 +11,54 @@ db_session = scoped_session(sessionmaker(autocommit=False,
                                          bind=engine))
 Base.query = db_session.query_property()
 session = db_session()
+
+class DatosCalle(object):
+    def __init__(self):
+        self.session = session
+        self.base = Base.metadata
+        self.engine = engine
+
+    def alta(self, calle):
+        """
+        Devuelve la Calle luego de darla de alta.
+        :type linea: Calle
+        :rtype: Calle
+        """
+        self.session.add(calle)
+        self.session.commit()
+        return calle
+
+    def buscar(self, calle_id):
+        """
+        Devuelve la calle de una intersección, dado su id.
+        Devuelve None si no encuentra nada.
+        :rtype: Calle
+        """
+        return self.session.query(CalleModel).get(calle_id)
+
+class DatosInterseccion(object):
+    def __init__(self):
+        self.session = session
+        self.base = Base.metadata
+        self.engine = engine
+
+    def alta(self, interseccion):
+        """
+        Devuelve la Intersección luego de darla de alta.
+        :type linea: Intersección
+        :rtype: Intersección
+        """
+        self.session.add(interseccion)
+        self.session.commit()
+        return interseccion
+
+    def buscar(self, interseccionDict):
+        """
+        Devuelve la instancia de una intersección, dado su id.
+        Devuelve None si no encuentra nada.
+        :rtype: Intersección
+        """
+        return self.session.query(InterseccionModel).get(interseccionDict)
 
 class DatosLinea(object):
     def __init__(self):
