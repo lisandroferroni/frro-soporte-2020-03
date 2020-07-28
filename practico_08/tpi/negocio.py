@@ -71,7 +71,7 @@ class InterseccionNegocio(object):
         :raise: InterseccionExistente
         :return: bool
         """
-        if(self.intersecciones.buscar({'id_linea': interseccion.id_linea, 'id_calle_1': interseccion.id_calle_1, 'id_calle_2': interseccion.id_calle_2}) != None):
+        if(self.intersecciones.buscar({'id_linea': interseccion.id_linea, 'id_parada': interseccion.id_parada}) != None):
             raise InterseccionExistente
         else:
             return True
@@ -202,6 +202,20 @@ def altas():
             try:
                 json = r.json()
                 print("ID LINEA ", i+1, " | Nombre linea ", json["nombre"], " | Paradas ",len(json["paradas"]), " | EMR", json["codigoEMR"])
+
+                #Lineas
+                lineaObj = LineaModel(id=int(json["id"]), name=json['nombre'])
+                negocioL.alta(lineaObj)
+
+                #Paradas
+                for p in json["paradas"]:
+                    try:
+                        paradaObj = ParadaModel(id=int(p["id"]))
+                        negocioP.alta(paradaObj)
+                        print("Append parada ", int(p["id"]))
+                    except Exception as e:
+                        print("Creating Parada ", e)
+
                 #Calles
                 c = requests.post('http://www.emr.gov.ar/ajax/cuandollega/getInfoParadas.php',
                     data = {'accion':'getCalle', 'idLinea': cllego_emr[json["codigoEMR"]]})
@@ -231,23 +245,15 @@ def altas():
                                     id_a_parada = 0
                                 #Intersección
                                 print("Agregando intersección.")
+                                paradaObj = ParadaModel(id=int(p["id"]))
                                 interObj = InterseccionModel(id_linea=int(json["id"]), id_calle_1=int(calle["id"]), id_calle_2=int(inter["id"]), id_parada=int(id_a_parada))
                                 negocioI.alta(interObj)
                             except Exception as e:
                                 print("Creating intersección error:", e)
                     except Exception as e:
                         print("Creating Parada ", e)
-                #Lineas
-                lineaObj = LineaModel( id=int(json["id"]), name=json['nombre'])
-                linea = negocioL.alta( lineaObj )
-                for p in json["paradas"]:
-                    try:
-                        paradaObj = ParadaModel(id=int(p["id"]))
-                    except Exception as e:
-                        print("Creating Parada ", e)
-                    finally:
-                        app_linea_parada = negocioL.lineas.append_parada(lineaObj, paradaObj)
-                        print( "Append parada ", int(p["id"])," to linea: ", int(json["id"]) )
+
+
             except Exception as e:
                 print(e)
                 print("Linea con ID ",i+1, " no existe")
