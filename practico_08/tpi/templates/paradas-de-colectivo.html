@@ -11,8 +11,46 @@
 {% endblock %}
 
 {% block content %}
+<div class="flex flex-wrap -mx-3 mb-2">
+    <div class="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+        <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="calle">
+            Calle
+        </label>
+        <div class="relative">
+            <input value="" class="bg-gray-200 border border-gray-200 text-gray-700 inset-y-30 right-0 left-0 py-3 px-4 rounded" id="calle" type="text"/>
+            <input value="" hidden id="calle_value" type="text"/>
+            <div class="search_result absolute bg-gray-200 border border-gray-200 text-gray-700 inset-y-30 right-0 left-0 py-3 px-4 rounded" id="calle_search" style="display: none;">
+
+            </div>
+        </div>
+    </div>
+    <div class="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+        <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="calleInterseccion">
+            Calle intersección
+        </label>
+        <div class="relative">
+            <select class="search_result absolute bg-gray-200 border border-gray-200 text-gray-700 inset-y-30 right-0 left-0 py-3 px-4 rounded" id="calleInterseccion">
+                <option selected disabled>Seleccionar parada primero</option>
+            </select>
+        </div>
+    </div>
+    <div class="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+        <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="paradas">
+            Parada
+        </label>
+        <div class="relative">
+            <select class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="paradas">
+                <option selected disabled>Seleccionar parada</option>
+            </select>
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+            </div>
+        </div>
+    </div>
+</div>
+
 <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" id="paradas">
-Paradas
+    Paradas
 </button>
 <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" id="lineas">
 Lineas
@@ -247,7 +285,79 @@ window.onload = function() {
 };
 </script>
 <script type=text/javascript>
+$(function() { //Populate paradas
+    var graphQ = `{ allParadas{ edges{ node{ id } } } }`
+    $('#query').text(graphQ)
+    $.ajax({
+        type : 'GET',
+        url: $SCRIPT_ROOT + '/graphql',
+        data: {
+            query: graphQ
+        },
+        success: function(data){
+            data.data.allParadas.edges.forEach(function(p){
+                $('#paradas').append(`<option value="${p.node.id}">${p.node.id}</option>`);
+            })
+            $('#response').text(JSON.stringify(data.data, null, 2))
+        },//success
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+            console.log( "Request failed: " + textStatus + " "+ errorThrown );
+        }//error
+    });//$ajax
+});
+
 $(function() {
+    var calle_id = ''
+    $( "input#calle" ).change(function() {
+        var graphQ = `query{ calleSearch(q: "`+$( this ).val()+`"){ id nombre } }`
+        $('#query').text(graphQ)
+        $.ajax({
+            type : 'GET',
+            url: $SCRIPT_ROOT + '/graphql',
+            data: {
+                query: graphQ
+            },
+            success: function(data){
+                console.log(data)
+                $('#calle_search').toggle();
+                $('#calle_search').text(data.data.calleSearch[0].nombre)
+                calle_id = data.data.calleSearch[0].id
+                $('#response').text(JSON.stringify(data.data, null, 2))
+            },//success
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                console.log( "Request failed: " + textStatus + " "+ errorThrown );
+            }//error
+        });//$ajax
+    });
+    function getInterseccion($) { //Buscando intersección luego de click en Calle
+        console.log($)
+        var graphQ = `query{ interSearch(q: "`+calle_id+`"){ id calle2{ nombre } } }`
+        console.log(graphQ)
+        $('#query').text(graphQ)
+        $.ajax({
+            type : 'GET',
+            url: $SCRIPT_ROOT + '/graphql',
+            data: {
+                query: graphQ
+            },
+            success: function(data){
+                console.log(data)
+                $('#calleI_search').toggle();
+                $('#calleInterseccion').empty()
+                data.data.interSearch.forEach(i => $('#calleInterseccion').append(`<option value="${i.id}">${i.calle2.nombre}</option>`));
+                $('#response').text(JSON.stringify(data.data, null, 2))
+            },//success
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                console.log( "Request failed: " + textStatus + " "+ errorThrown );
+            }//error
+        });//$ajax
+    };
+    $('#calle_search').bind('click', function() {
+        $( "input#calle" ).val($( this ).text())
+        $( "input#calle_value" ).val($( this ).text())
+        getInterseccion($)
+        $( this ).toggle()
+    })
     $('button#paradas').bind('click', function() {
         var graphQ = `{ lineas{ id name paradas{ edges{ node{ id idCallePpal idCalleCruce } } } } }`
         $('#query').text(graphQ)
