@@ -45,7 +45,7 @@ class InterseccionModel(Base):
 
 class BoletoModel(Base):
     __tablename__ = 'boleto'
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, autoincrement=True, primary_key=True)
     id_linea = Column(Integer)
     id_parada = Column(Integer)
     created_date = Column(DateTime, default=datetime.datetime.utcnow)

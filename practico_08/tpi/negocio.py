@@ -1,8 +1,9 @@
-from practico_08.tpi.models import LineaModel, ParadaModel, CalleModel, InterseccionModel
-from practico_08.tpi.data import DatosLinea, DatosParada, DatosCalle, DatosInterseccion
+from practico_08.tpi.models import LineaModel, ParadaModel, CalleModel, InterseccionModel, BoletoModel
+from practico_08.tpi.data import DatosLinea, DatosParada, DatosCalle, DatosInterseccion, DatosBoleto
 import requests
 from lxml import etree
 from bs4 import BeautifulSoup
+from datetime import datetime, timedelta
 
 class LineaExistente(Exception):
     def __str__(self):
@@ -135,6 +136,14 @@ class ParadaNegocio(object):
         return self.paradas.getLineas(id_parada)
 
 
+class BoletoNegocio(object):
+    def __init__(self):
+        self.boletos = DatosBoleto()
+
+    def alta(self, boleto):
+        self.boletos.alta(boleto)
+
+
 def altas():
     # alta
     negocioL = LineaNegocio()
@@ -259,12 +268,19 @@ def altas():
                 print("Linea con ID ",i+1, " no existe")
 
 def boletos():
+    negocioB = BoletoNegocio()
+    for x in range (10):
+        boleto = BoletoModel(id_linea=2, id_parada=6950)
+        negocioB.alta(boleto)
+
+
+    '''
     negocioL = LineaNegocio()
     negocioP = ParadaNegocio()
     lineas_paradas = negocioL.lineas.getParadas(1)
     for lp in lineas_paradas:
         print(lp.linea_id)
-
+    '''
 if __name__ == '__main__':
     altas()
     #boletos()

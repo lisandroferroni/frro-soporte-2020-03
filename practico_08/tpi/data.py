@@ -48,9 +48,16 @@ class DatosInterseccion(object):
         :type linea: Intersección
         :rtype: Intersección
         """
-        self.session.add(interseccion)
-        self.session.commit()
-        return interseccion
+        try:
+            self.session.add(interseccion)
+            self.session.commit()
+            return interseccion
+        except Exception as e:
+            print("Error appending interseccion", e)
+            print("Rolling back append")
+            self.session.rollback()
+        finally:
+            return
 
     def buscar(self, interseccionDict):
         """
@@ -118,6 +125,22 @@ class DatosLinea(object):
     def getParadas(self, id_linea):
         linea = self.session.query(LineaModel).get(id_linea)
         return linea.paradas
+
+class DatosBoleto(object):
+    def __init__(self):
+        self.session = session
+        self.base = Base.metadata
+        self.engine = engine
+
+    def alta(self, boleto):
+        """
+        Devuelve la Linea luego de darlo de alta.
+        :type linea: Linea
+        :rtype: Linea
+        """
+        self.session.add(boleto)
+        self.session.commit()
+        return boleto
 
 class DatosParada(object):
     def __init__(self):
