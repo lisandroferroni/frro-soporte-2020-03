@@ -42,9 +42,11 @@ class Query(graphene.ObjectType):
     calles = graphene.List(Calle)
     calles = graphene.List(Calle, q=graphene.String())
     calleSearch = graphene.List(Calle, q=graphene.String())
-    interSearch = graphene.List(Interseccion, q=graphene.String())
+    calle1_by_id_linea = graphene.List(Interseccion, idLinea=graphene.Int())
+    calle2_by_calle1 = graphene.List(Interseccion, idCalle1=graphene.Int())
     lineas = graphene.List(Linea)
     paradas = graphene.List(Parada)
+    parada_by_idlinea_c1_c2 = graphene.List(Interseccion, idLinea=graphene.Int(), idCalle1=graphene.Int(), idCalle2=graphene.Int())
     boleto_by_linea_parada = graphene.List(Boleto, idLinea=graphene.Int(), idParada=graphene.Int())
     boletos = graphene.List(Boleto)
     all_calles = SQLAlchemyConnectionField(Calle)
@@ -59,11 +61,19 @@ class Query(graphene.ObjectType):
         calles = query.filter(CalleModel.nombre.contains(q)).all()
         return calles
 
-
-    def resolve_interSearch(self, info, **args):
-        q = args.get("q")  # Search query
+    def resolve_calle1_by_id_linea(self, info, idLinea):
         query = Interseccion.get_query(info)  # SQLAlchemy query
-        calles = query.filter(InterseccionModel.id_calle_1==q).join(CalleModel, CalleModel.id == InterseccionModel.id_calle_2, isouter=True).all()
+        calles = query.filter(InterseccionModel.id_linea==idLinea).\
+            join(CalleModel, CalleModel.id == InterseccionModel.id_calle_1, isouter=True).\
+            group_by(InterseccionModel.id_calle_1).all()
+        return calles
+
+    def resolve_calle2_by_calle1(self, info, idCalle1):
+        query = Interseccion.get_query(info)  # SQLAlchemy query
+        calles = query.\
+            filter(InterseccionModel.id_calle_1==idCalle1).join(CalleModel, CalleModel.id == InterseccionModel.id_calle_2, isouter=True).\
+            group_by(InterseccionModel.id_calle_1).\
+            all()
         return calles
 
 
@@ -82,6 +92,16 @@ class Query(graphene.ObjectType):
         query = Boleto.get_query(info)  # SQLAlchemy query
         return query.all()
 
+    def resolve_parada_by_idlinea_c1_c2(self, info, idLinea, idCalle1, idCalle2):
+        query = Interseccion.get_query(info)  # SQLAlchemy query
+        parada = query.\
+            filter(
+                InterseccionModel.id_linea == idLinea,
+                InterseccionModel.id_calle_1 == idCalle1,
+                InterseccionModel.id_calle_2 == idCalle2
+            ).\
+            all()
+        return parada
 
     def resolve_boleto_by_linea_parada(self, info, idLinea, idParada):
         query = Boleto.get_query(info)
