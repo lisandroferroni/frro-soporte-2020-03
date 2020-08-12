@@ -62,7 +62,7 @@ class Query(graphene.ObjectType):
     calles = graphene.List(Calle, q=graphene.String())
     calleSearch = graphene.List(Calle, q=graphene.String())
     calle1_by_id_linea = graphene.List(Interseccion, idLinea=graphene.Int())
-    calle2_by_calle1 = graphene.List(Interseccion, idCalle1=graphene.Int())
+    calle2_by_idLinea_calle1 = graphene.List(Interseccion, idLinea=graphene.Int(), idCalle1=graphene.Int())
     lineas = graphene.List(Linea)
     paradas = graphene.List(Parada)
     parada_by_idlinea_c1_c2 = graphene.List(Interseccion, idLinea=graphene.Int(), idCalle1=graphene.Int(), idCalle2=graphene.Int())
@@ -83,15 +83,18 @@ class Query(graphene.ObjectType):
     def resolve_calle1_by_id_linea(self, info, idLinea):
         query = Interseccion.get_query(info)  # SQLAlchemy query
         calles = query.filter(InterseccionModel.id_linea==idLinea).\
-            join(CalleModel, CalleModel.id == InterseccionModel.id_calle_1, isouter=True).\
-            group_by(InterseccionModel.id_calle_1).all()
+            join(CalleModel, CalleModel.id == InterseccionModel.id_calle_1, isouter=True). \
+            order_by(CalleModel.nombre). \
+            group_by(InterseccionModel.id_calle_1).\
+            all()
         return calles
 
-    def resolve_calle2_by_calle1(self, info, idCalle1):
+    def resolve_calle2_by_idLinea_calle1(self, info, idLinea, idCalle1):
         query = Interseccion.get_query(info)  # SQLAlchemy query
         calles = query.\
-            filter(InterseccionModel.id_calle_1==idCalle1).join(CalleModel, CalleModel.id == InterseccionModel.id_calle_2, isouter=True).\
-            group_by(InterseccionModel.id_calle_1).\
+            filter(InterseccionModel.id_calle_1==idCalle1, InterseccionModel.id_linea==idLinea).\
+            join(CalleModel, CalleModel.id == InterseccionModel.id_calle_2, isouter=True).\
+            order_by(CalleModel.nombre).\
             all()
         return calles
 

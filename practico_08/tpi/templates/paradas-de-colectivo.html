@@ -307,7 +307,8 @@ $(function() { //Populate paradas
 $(function() {
     var calle_id = ''
     $( "#calle" ).change(function() {
-        var graphQ = `query{ calle2ByCalle1(idCalle1: `+$( this ).val()+`){ calle2 {id nombre} } }`
+        var id_linea = $('#sLineas').val()
+        var graphQ = `query{ calle2ByIdlineaCalle1(idLinea: `+id_linea+`, idCalle1: `+$( this ).val()+`){ calle2 {id nombre} } }`
         $('#query').text(graphQ)
         $.ajax({
             type : 'GET',
@@ -316,7 +317,8 @@ $(function() {
                 query: graphQ
             },
             success: function(data){
-                data.data.calle2ByCalle1.forEach(c => $('#calleInterseccion').append(`<option value="${c.calle2.id}">${c.calle2.nombre}</option>`));
+                $('#calleInterseccion').empty()
+                data.data.calle2ByIdlineaCalle1.forEach(c => $('#calleInterseccion').append(`<option value="${c.calle2.id}">${c.calle2.nombre}</option>`));
                 $('#response').text(JSON.stringify(data.data, null, 2))
             },//success
             error: function(XMLHttpRequest, textStatus, errorThrown) {
@@ -362,7 +364,7 @@ $(function() {
                 query: graphQ
             },
             success: function(data){
-                console.log(data.data.calle1ByIdLinea)
+                $('#calle').empty()
                 data.data.calle1ByIdLinea.forEach(c => $('#calle').append(`<option value="${c.calle1.id}">${c.calle1.nombre}</option>`));
                 $('#response').text(JSON.stringify(data.data, null, 2))
             },//success
@@ -393,24 +395,6 @@ $(function() {
             }//error
         });//$ajax
     })
-    $('button#paradas').bind('click', function() {
-        var graphQ = `{ lineas{ id name paradas{ edges{ node{ id idCallePpal idCalleCruce } } } } }`
-        $('#query').text(graphQ)
-        $.ajax({
-            type : 'GET',
-            url: $SCRIPT_ROOT + '/graphql',
-            data: {
-                query: graphQ
-            },
-            success: function(data){
-                console.log(data)
-                $('#response').text(JSON.stringify(data.data, null, 2))
-            },//success
-            error: function(XMLHttpRequest, textStatus, errorThrown) {
-                console.log( "Request failed: " + textStatus + " "+ errorThrown );
-            }//error
-        });//$ajax
-    });
     $('button#lineas').bind('click', function() {
         var graphQ = `query{ lineas{ id name paradas{ edges{ node{ id idCallePpal idCalleCruce } } } } }`
         $('#query').text(graphQ)
@@ -421,7 +405,6 @@ $(function() {
                 query: graphQ
             },
             success: function(data){
-                console.log(data)
                 $('#response').text(JSON.stringify(data.data, null, 2))
             },//success
             error: function(XMLHttpRequest, textStatus, errorThrown) {
