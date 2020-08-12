@@ -2,6 +2,7 @@ import graphene
 from graphene import ObjectType
 from graphene_sqlalchemy import SQLAlchemyConnectionField, SQLAlchemyObjectType
 from models import *
+from data import DatosBoleto
 from datetime import datetime, timedelta
 
 class Linea(SQLAlchemyObjectType):
@@ -36,6 +37,24 @@ class Boleto(SQLAlchemyObjectType):
     class Meta:
         model = BoletoModel
         interfaces = (graphene.relay.Node, )
+
+
+class CreateBoleto (graphene.Mutation):
+    class Arguments:
+        id_linea = graphene.Int()
+        id_parada = graphene.Int()
+
+    boleto = graphene.Field(Boleto)
+
+    def mutate (self, info, id_linea, id_parada):
+        datosBoleto = DatosBoleto()
+        boleto = BoletoModel(id_linea=id_linea, id_parada=id_parada)
+        datosBoleto.alta(boleto)
+        return CreateBoleto(boleto)
+
+
+class Mutations(graphene.ObjectType):
+    create_boleto = CreateBoleto.Field()
 
 
 class Query(graphene.ObjectType):
@@ -116,7 +135,7 @@ class Query(graphene.ObjectType):
         ).all()
 
 
-schema = graphene.Schema(query=Query, types=[Linea])
+schema = graphene.Schema(query=Query, types=[Linea], mutation=Mutations)
 
 '''
 class Person(SQLAlchemyObjectType):

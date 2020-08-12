@@ -138,9 +138,16 @@ class DatosBoleto(object):
         :type linea: Linea
         :rtype: Linea
         """
-        self.session.add(boleto)
-        self.session.commit()
-        return boleto
+        try:
+            self.session.add(boleto)
+            self.session.commit()
+            return boleto
+        except Exception as e:
+            print("Error appending ", e)
+            print("Rolling back")
+            self.session.rollback()
+            return e
+
 
 class DatosParada(object):
     def __init__(self):
