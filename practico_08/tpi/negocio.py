@@ -272,7 +272,7 @@ def altas():
 def boletos():
     negocioB = BoletoNegocio()
     for x in range (10):
-        boleto = BoletoModel(id_linea=2, id_parada=6950)
+        boleto = BoletoModel(id_linea=1, id_parada=6732, created_date='2020-03-12 05:40:35.866364')
         negocioB.alta(boleto)
 
 
