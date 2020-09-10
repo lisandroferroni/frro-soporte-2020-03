@@ -1,9 +1,11 @@
 from practico_08.tpi.models import LineaModel, ParadaModel, CalleModel, InterseccionModel, BoletoModel
 from practico_08.tpi.data import DatosLinea, DatosParada, DatosCalle, DatosInterseccion, DatosBoleto
+from practico_08.tpi.helpers import normal_dates
 import requests
 from lxml import etree
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
+import random
 
 class LineaExistente(Exception):
     def __str__(self):
@@ -271,9 +273,25 @@ def altas():
 
 def boletos():
     negocioB = BoletoNegocio()
-    for x in range (10):
-        boleto = BoletoModel(id_linea=1, id_parada=6732, created_date='2020-03-12 05:40:35.866364')
-        negocioB.alta(boleto)
+    negocioL = LineaNegocio()
+    negocioB.boletos.borrar_todos()
+    now = datetime.now()
+    yest = now - timedelta(days=1)
+    print('Cantidad de lineas: ', len(negocioL.lineas.all()))
+    for l in negocioL.lineas.all(): #Cada línea de colectivo
+        print('----------Cantidad de paradas: ', len(negocioL.lineas.getParadas(l.id)))
+        for p in negocioL.lineas.getParadas(l.id): #Cada parada de cada línea de colectivo
+            now = datetime.now()
+            for i in range(30):  # Cada día de los últimos 30.
+                print(i+1)
+                yest = now - timedelta(days=1)
+                print(yest.strftime("%Y-%m-%d %H:%M:%S"), now.strftime("%Y-%m-%d %H:%M:%S"))
+                qty = random.randint(1, 10)
+                dates = normal_dates(yest.strftime("%Y-%m-%d %H:%M:%S"), now.strftime("%Y-%m-%d %H:%M:%S"), qty)
+                now = yest
+                for d in dates:
+                    boleto = BoletoModel(id_linea=l.id, id_parada=p.id, created_date=d)
+                    negocioB.alta(boleto)
 
 
     '''
@@ -284,5 +302,5 @@ def boletos():
         print(lp.linea_id)
     '''
 if __name__ == '__main__':
-    altas()
-    #boletos()
+    #altas()
+    boletos()

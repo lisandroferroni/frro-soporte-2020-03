@@ -1,6 +1,6 @@
 from sqlalchemy.orm import sessionmaker, scoped_session
 from practico_08.tpi.database import engine
-from practico_08.tpi.models import LineaModel, ParadaModel, CalleModel, InterseccionModel, Base
+from practico_08.tpi.models import BoletoModel, LineaModel, ParadaModel, CalleModel, InterseccionModel, Base
 import json
 import requests
 
@@ -114,17 +114,30 @@ class DatosLinea(object):
         else:
             return True
 
+    def all(self):
+        """
+        Devuelve las instancias de lineas.
+        Devuelve None si no encuentra nada.
+        :rtype: [Linea]
+        """
+        return self.session.query(LineaModel).all()
+
     def buscar(self, id_linea):
         """
         Devuelve la instancia de una linea, dado su id.
         Devuelve None si no encuentra nada.
-        :rtype: Socio
+        :rtype: Linea
         """
         return self.session.query(LineaModel).get(id_linea)
 
     def getParadas(self, id_linea):
-        linea = self.session.query(LineaModel).get(id_linea)
-        return linea.paradas
+        intersecciones = self.session.query(InterseccionModel).filter(InterseccionModel.id_linea == id_linea)
+        paradas = []
+        for i in intersecciones:
+            p = DatosParada.buscar(self, i.id_parada)
+            if p is not None:
+                paradas.append(p)
+        return paradas
 
 class DatosBoleto(object):
     def __init__(self):
@@ -148,6 +161,19 @@ class DatosBoleto(object):
             self.session.rollback()
             return e
 
+    def borrar_todos(self):
+        """
+        Borra todos los boletos de la base de datos.
+        Devuelve True si el borrado fue exitoso.
+        :rtype: bool
+        """
+        try:
+            self.session.query(BoletoModel).delete()
+            self.session.commit()
+        except:
+            return False
+        else:
+            return True
 
 class DatosParada(object):
     def __init__(self):

@@ -1,8 +1,5 @@
 import datetime
-import time
-import numpy as np
-from matplotlib import pyplot
-from matplotlib.dates import date2num
+
 from sqlalchemy import Column, Table, Integer, ForeignKey, String, DateTime, ForeignKeyConstraint
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
@@ -65,25 +62,3 @@ class LineaParadaModel(Base):
     linea = relationship("LineaModel", back_populates="lineaParadas")
     parada = relationship("ParadaModel", back_populates="paradas")
 '''
-
-print(np.random.normal(0, 1, size=(1, 4)))
-
-_DATE_RANGE = ('2020-01-01 00:00:00', '2020-01-02 00:00:00')
-_DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
-_EMPIRICAL_SCALE_RATIO = 0.15
-_DISTRIBUTION_SIZE = 1000
-
-time_range = tuple(time.mktime(time.strptime(d, _DATE_FORMAT))
-                   for d in _DATE_RANGE)
-distribution = np.random.normal(
-    loc=(time_range[0] + time_range[1]) * 0.5,
-    scale=(time_range[1] - time_range[0]) * _EMPIRICAL_SCALE_RATIO,
-    size=_DISTRIBUTION_SIZE
-)
-date_range = tuple(time.strftime(_DATE_FORMAT, time.localtime(t))
-                   for t in np.sort(distribution))
-print(date_range) #Acá queda el arreglo de fechas con distribución uniforme
-
-##Gráfica acumulativa de fechas con distribución normal.
-pyplot.hist(date2num(date_range), cumulative=True)
-pyplot.show()
