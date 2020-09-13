@@ -1,8 +1,10 @@
+import sqlalchemy
 from sqlalchemy.orm import sessionmaker, scoped_session
 from practico_08.tpi.database import engine
 from practico_08.tpi.models import BoletoModel, LineaModel, ParadaModel, CalleModel, InterseccionModel, Base
 import json
 import requests
+import datetime
 
 Base.metadata.create_all(engine)
 Base.metadata.bind = engine
@@ -175,6 +177,7 @@ class DatosBoleto(object):
         else:
             return True
 
+
 class DatosParada(object):
     def __init__(self):
         self.session = session
@@ -257,5 +260,29 @@ def altas():
                 print(linea)
     """
 
+class StoredProcedures(object):
+    def __init__(self):
+        self.session = session
+        self.base = Base.metadata
+        self.engine = engine
+
+    def cuandoLlego(self, deltaDias, fecha, linea, parada):
+        try:
+            connection = engine.raw_connection()
+            cursor = connection.cursor()
+            cursor.callproc("CuandoLlego", [deltaDias, fecha, linea, parada])
+            results = list(cursor.fetchall())
+            cursor.close()
+            connection.commit()
+            return results[0][0]
+
+        except Exception as e:
+            print("Error calling 'CuandoLlego :", e)
+
+
+
 if __name__ == '__main__':
     altas()
+
+    #sp = StoredProcedures()
+    #print(sp.cuandoLlego(300, datetime.datetime.utcnow(), 1, 1141))
