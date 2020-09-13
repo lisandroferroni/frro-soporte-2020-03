@@ -1,5 +1,5 @@
 from practico_08.tpi.models import LineaModel, ParadaModel, CalleModel, InterseccionModel, BoletoModel
-from practico_08.tpi.data import DatosLinea, DatosParada, DatosCalle, DatosInterseccion, DatosBoleto
+from practico_08.tpi.data import DatosLinea, DatosParada, DatosCalle, DatosInterseccion, DatosBoleto, DatosStoredProcedure
 from practico_08.tpi.helpers import normal_dates
 import requests
 from lxml import etree
@@ -144,6 +144,13 @@ class BoletoNegocio(object):
 
     def alta(self, boleto):
         self.boletos.alta(boleto)
+
+class StoredProcedureNegocio(object):
+    def __init__(self):
+        self.sp = DatosStoredProcedure()
+
+    def cuandoLlego(self, deltaDias, fecha, linea, parada):
+        return self.sp.cuandoLlego(deltaDias, fecha, linea, parada)
 
 
 def altas():

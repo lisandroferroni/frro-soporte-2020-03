@@ -260,7 +260,7 @@ def altas():
                 print(linea)
     """
 
-class StoredProcedures(object):
+class DatosStoredProcedure(object):
     def __init__(self):
         self.session = session
         self.base = Base.metadata
@@ -284,5 +284,5 @@ class StoredProcedures(object):
 if __name__ == '__main__':
     altas()
 
-    #sp = StoredProcedures()
+    #sp = DatosStoredProcedure()
     #print(sp.cuandoLlego(300, datetime.datetime.utcnow(), 1, 1141))
