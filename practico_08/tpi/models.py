@@ -1,6 +1,6 @@
 import datetime
 
-from sqlalchemy import Column, Table, Integer, ForeignKey, String, DateTime, ForeignKeyConstraint
+from sqlalchemy import Column, Table, Integer, ForeignKey, String, DateTime, ForeignKeyConstraint, Time
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 import json
@@ -49,10 +49,18 @@ class BoletoModel(Base):
     id = Column(Integer, autoincrement=True, primary_key=True)
     id_linea = Column(Integer)
     id_parada = Column(Integer)
+    id_cuadro = Column(Integer, ForeignKey('cuadro.id'))
     created_date = Column(DateTime, default=datetime.datetime.utcnow)
     __table_args__ = (ForeignKeyConstraint([id_linea, id_parada], [InterseccionModel.id_linea, InterseccionModel.id_parada]),)
 
-
+class CuadroModel(Base):
+    __tablename__ = 'cuadro'
+    id = Column(Integer, autoincrement=True, primary_key=True)
+    id_linea = Column(Integer)
+    id_parada = Column(Integer)
+    hora = Column(Time)
+    tipo_dia = Column(Integer, default=0)
+    __table_args__ = (ForeignKeyConstraint([id_linea, id_parada], [InterseccionModel.id_linea, InterseccionModel.id_parada]),)
 
 '''
 class LineaParadaModel(Base):

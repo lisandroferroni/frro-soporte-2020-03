@@ -1,7 +1,7 @@
 import sqlalchemy
 from sqlalchemy.orm import sessionmaker, scoped_session
 from practico_08.tpi.database import engine
-from practico_08.tpi.models import BoletoModel, LineaModel, ParadaModel, CalleModel, InterseccionModel, Base
+from practico_08.tpi.models import BoletoModel, LineaModel, ParadaModel, CalleModel, InterseccionModel, CuadroModel, Base
 import json
 import requests
 import datetime
@@ -237,6 +237,53 @@ class DatosParada(object):
         parada = self.session.query(ParadaModel).get(id_parada)
         return parada.lineas
 
+
+class DatosCuadro(object):
+    def __init__(self):
+        self.session = session
+        self.base = Base.metadata
+        self.engine = engine
+
+    def alta(self, cuadro):
+        """
+        Devuelve la Linea luego de darlo de alta.
+        :type cuadro: Cuadro
+        :rtype: Cuadro
+        """
+        try:
+            self.session.add(cuadro)
+            self.session.commit()
+            return cuadro
+        except Exception as e:
+            print("Error appending ", e)
+            print("Rolling back")
+            self.session.rollback()
+            return e
+
+    def getCuadro(self, id_cuadro):
+        return self.session.query(CuadroModel).get(id_cuadro)
+
+
+class DatosStoredProcedure(object):
+    def __init__(self):
+        self.session = session
+        self.base = Base.metadata
+        self.engine = engine
+
+    def cuandoLlego(self, deltaDias, fecha, linea, parada):
+        try:
+            connection = engine.raw_connection()
+            cursor = connection.cursor()
+            cursor.callproc("CuandoLlego", [deltaDias, fecha, linea, parada])
+            results = list(cursor.fetchall())
+            cursor.close()
+            connection.commit()
+            return results[0][0]
+
+        except Exception as e:
+            print("Error calling 'CuandoLlego :", e)
+
+
 def altas():
     # alta
     datosL = DatosLinea()
@@ -260,24 +307,7 @@ def altas():
                 print(linea)
     """
 
-class DatosStoredProcedure(object):
-    def __init__(self):
-        self.session = session
-        self.base = Base.metadata
-        self.engine = engine
 
-    def cuandoLlego(self, deltaDias, fecha, linea, parada):
-        try:
-            connection = engine.raw_connection()
-            cursor = connection.cursor()
-            cursor.callproc("CuandoLlego", [deltaDias, fecha, linea, parada])
-            results = list(cursor.fetchall())
-            cursor.close()
-            connection.commit()
-            return results[0][0]
-
-        except Exception as e:
-            print("Error calling 'CuandoLlego :", e)
 
 
 

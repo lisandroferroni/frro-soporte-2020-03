@@ -1,10 +1,10 @@
-from practico_08.tpi.models import LineaModel, ParadaModel, CalleModel, InterseccionModel, BoletoModel
-from practico_08.tpi.data import DatosLinea, DatosParada, DatosCalle, DatosInterseccion, DatosBoleto, DatosStoredProcedure
+from practico_08.tpi.models import LineaModel, ParadaModel, CalleModel, InterseccionModel, BoletoModel, CuadroModel
+from practico_08.tpi.data import DatosLinea, DatosParada, DatosCalle, DatosInterseccion, DatosBoleto, DatosCuadro, DatosStoredProcedure
 from practico_08.tpi.helpers import normal_dates
 import requests
 from lxml import etree
 from bs4 import BeautifulSoup
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 import random
 
 class LineaExistente(Exception):
@@ -144,6 +144,15 @@ class BoletoNegocio(object):
 
     def alta(self, boleto):
         self.boletos.alta(boleto)
+
+
+class CuadroNegocio(object):
+    def __init__(self):
+        self.cuadros = DatosCuadro()
+
+    def alta(self, cuadro):
+        self.cuadros.alta(cuadro)
+
 
 class StoredProcedureNegocio(object):
     def __init__(self):
@@ -300,6 +309,30 @@ def boletos():
                     boleto = BoletoModel(id_linea=l.id, id_parada=p.id, created_date=d)
                     negocioB.alta(boleto)
 
+def crearBoletos():
+    dia = datetime(2020, 9, 21, 20, 0, 0)
+
+    print(dia)
+    negocioB = BoletoNegocio()
+    for i in range(50):
+        dia = dia - timedelta(days=1)
+        dates = normal_dates((dia - timedelta(minutes=(5))).strftime("%Y-%m-%d %H:%M:%S"), (dia + timedelta(minutes=(5))).strftime("%Y-%m-%d %H:%M:%S"), 20)
+        for d in dates:
+            boleto = BoletoModel(id_linea=1, id_parada=1103, created_date=d, id_cuadro=3)
+            negocioB.alta(boleto)
+            print(d)
+
+def crearCuadro():
+    negocioC = CuadroNegocio()
+
+    cuadro = CuadroModel(id_linea=1, id_parada=1103, hora=time(1, 0))
+    cuadro1 = CuadroModel(id_linea=1, id_parada=1103, hora=time(12, 0))
+    cuadro2 = CuadroModel(id_linea=1, id_parada=1103, hora=time(20, 0))
+
+    negocioC.alta(cuadro)
+    negocioC.alta(cuadro1)
+    negocioC.alta(cuadro2)
+
 
     '''
     negocioL = LineaNegocio()
@@ -310,4 +343,6 @@ def boletos():
     '''
 if __name__ == '__main__':
     #altas()
-    boletos()
+    #boletos()
+    crearBoletos()
+    #crearCuadro()

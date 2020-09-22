@@ -39,6 +39,13 @@ class Boleto(SQLAlchemyObjectType):
         interfaces = (graphene.relay.Node, )
 
 
+class Cuadro(SQLAlchemyObjectType):
+    id = graphene.ID(source='id', required=True)
+    class Meta:
+        model = CuadroModel
+        interfaces = (graphene.relay.Node, )
+
+
 class CreateBoleto (graphene.Mutation):
     class Arguments:
         id_linea = graphene.Int()
@@ -67,6 +74,7 @@ class Query(graphene.ObjectType):
     parada_by_idlinea_c1_c2 = graphene.List(Interseccion, idLinea=graphene.Int(), idCalle1=graphene.Int(), idCalle2=graphene.Int())
     boleto_by_linea_parada = graphene.List(Boleto, idLinea=graphene.Int(), idParada=graphene.Int(), deltaDias=graphene.Int())
     boletos = graphene.List(Boleto)
+    cuadros = graphene.List(Cuadro)
     all_calles = SQLAlchemyConnectionField(Calle)
     all_lineas = SQLAlchemyConnectionField(Linea)
     all_paradas = SQLAlchemyConnectionField(Parada)
@@ -112,6 +120,10 @@ class Query(graphene.ObjectType):
     def resolve_boletos(self, info):
         query = Boleto.get_query(info)  # SQLAlchemy query
         print(query.statement.compile(compile_kwargs={"literal_binds": True}))
+        return query.all()
+
+    def resolve_cuadros(self, info):
+        query = Cuadro.get_query(info)  # SQLAlchemy query
         return query.all()
 
     def resolve_parada_by_idlinea_c1_c2(self, info, idLinea, idCalle1, idCalle2):
