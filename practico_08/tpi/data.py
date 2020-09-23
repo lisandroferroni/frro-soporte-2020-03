@@ -283,6 +283,74 @@ class DatosStoredProcedure(object):
         except Exception as e:
             print("Error calling 'CuandoLlego :", e)
 
+    def createProcedure(self):
+        try:
+            query = "USE cuandollego;"
+            query1 = "DROP PROCEDURE IF EXISTS CuandoLlego;"
+            query2 = """CREATE PROCEDURE CuandoLlego(deltaDias INT , fecha DATETIME, linea INT, parada INT)\n\
+            BEGIN\n\
+                DROP TEMPORARY TABLE IF EXISTS Segundos;\n\
+                CREATE TEMPORARY TABLE Segundos(Segundo INT);\n\
+                SET @contador = 0;\n\
+                SET @fecha = fecha;\n\
+                SET @idCuadroProxHorario = 0;\n\
+                SET @tipoDia = CASE WHEN WEEKDAY(fecha) < 5 THEN 0\n\
+                                    WHEN WEEKDAY(fecha) = 5 THEN 1\n\
+                                    ELSE 2\n\
+                                    END;\n\
+            \n\
+                SELECT id \n\
+                FROM cuadro\n\
+                WHERE id_linea = linea \n\
+                AND id_parada = parada\n\
+                AND Hora >= TIME(DATE_ADD(fecha, INTERVAL -10 minute)) \n\
+                -- AND tipo_dia = @tipoDia \n\
+                ORDER BY Hora\n\
+                LIMIT 1    \n\
+                INTO @idCuadroProxHorario;   \n\
+                \n\
+                IF @idCuadroProxHorario = 0 THEN\n\
+                    SELECT id \n\
+                    FROM cuadro\n\
+                    WHERE id_linea = linea \n\
+                    AND id_parada = parada\n\
+                    -- AND tipo_dia = @tipoDia\n\
+                    ORDER BY Hora\n\
+                    LIMIT 1\n\
+                    INTO @idCuadroProxHorario;\n\
+                    \n\
+                END IF;\n\
+            \n\
+                WHILE @contador <= deltaDias DO\n\
+                    SET @contador = @contador + 1;\n\
+                    SET @fecha = CASE\n\
+                            WHEN WEEKDAY(fecha) < 5 AND WEEKDAY(@fecha)<>0 THEN DATE_ADD(@fecha, INTERVAL -1 DAY)\n\
+                            WHEN WEEKDAY(fecha) < 5 AND WEEKDAY(@fecha)=0 THEN DATE_ADD(@fecha, INTERVAL -3 DAY)\n\
+                            ELSE DATE_ADD(@fecha, INTERVAL -7 DAY)\n\
+                            END;\n\
+            \n\
+                    INSERT INTO Segundos\n\
+                        SELECT TIMESTAMPDIFF(SECOND, @fecha , created_date)  \n\
+                        FROM boleto\n\
+                        WHERE (DATE(created_date) = DATE(@fecha)\n\
+                        OR DATE(created_date) = DATE(DATE_ADD(@fecha, INTERVAL 1 DAY)))\n\
+                        AND created_date > DATE_ADD(@fecha, INTERVAL -1 HOUR)\n\
+                        AND id_linea = linea\n\
+                        AND id_parada = parada\n\
+                        AND id_cuadro =  @idCuadroProxHorario\n\
+                        ORDER BY created_date\n\
+                        LIMIT 1;\n\
+                END WHILE;\n\
+                SELECT SEC_TO_TIME(AVG(Segundo)) TiempoParaArribo from Segundos;    \n\
+            END"""
+            connection = engine.raw_connection()
+            cursor = connection.cursor()
+            cursor.execute(query)
+            cursor.execute(query1)
+            cursor.execute(query2)
+        except Exception as e:
+            print("Error creating store procedure: ", e)
+
 
 def altas():
     # alta

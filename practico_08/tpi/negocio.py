@@ -161,6 +161,10 @@ class StoredProcedureNegocio(object):
     def cuandoLlego(self, deltaDias, fecha, linea, parada):
         return self.sp.cuandoLlego(deltaDias, fecha, linea, parada)
 
+    def createCuandoLlegoSP(self):
+        self.sp.createProcedure()
+
+
 
 def altas():
     # alta
@@ -333,6 +337,10 @@ def crearCuadro():
     negocioC.alta(cuadro1)
     negocioC.alta(cuadro2)
 
+def createSP():
+    negocioSP = StoredProcedureNegocio()
+    negocioSP.createCuandoLlegoSP()
+
 
     '''
     negocioL = LineaNegocio()
@@ -344,5 +352,6 @@ def crearCuadro():
 if __name__ == '__main__':
     #altas()
     #boletos()
-    crearBoletos()
+    #crearBoletos()
     #crearCuadro()
+    createSP()
