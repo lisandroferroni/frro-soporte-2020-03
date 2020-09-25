@@ -118,7 +118,7 @@ $(function() {
         let p = $('#paradaInput').val()
         $.when( cuandollega_http( d, l, p ) )
             .then(function( data, textStatus, jqXHR ) {
-                if(!data.includes('0:'))
+                if(!data.includes(':'))
                     $('#arrive').html('Próximo servicio no encontrado.')
                 else{
                     let arrHour = data.split(':')
