@@ -275,10 +275,13 @@ class DatosStoredProcedure(object):
             connection = engine.raw_connection()
             cursor = connection.cursor()
             cursor.callproc("CuandoLlego", [deltaDias, fecha, linea, parada])
-            results = list(cursor.fetchall())
+            results = cursor.fetchall()
             cursor.close()
             connection.commit()
-            return results[0][0]
+            resultList = []
+            for index in range(len(results)):
+                resultList.append(results[index][0])
+            return resultList
 
         except Exception as e:
             print("Error calling 'CuandoLlego :", e)
