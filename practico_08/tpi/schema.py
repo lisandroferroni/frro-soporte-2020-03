@@ -75,6 +75,7 @@ class Query(graphene.ObjectType):
     boleto_by_linea_parada = graphene.List(Boleto, idLinea=graphene.Int(), idParada=graphene.Int(), deltaDias=graphene.Int())
     boletos = graphene.List(Boleto)
     cuadros = graphene.List(Cuadro)
+    cuadros_by_linea_parada = graphene.List(Cuadro, idLinea=graphene.Int(), idParada=graphene.Int())
     all_calles = SQLAlchemyConnectionField(Calle)
     all_lineas = SQLAlchemyConnectionField(Linea)
     all_paradas = SQLAlchemyConnectionField(Parada)
@@ -125,6 +126,13 @@ class Query(graphene.ObjectType):
     def resolve_cuadros(self, info):
         query = Cuadro.get_query(info)  # SQLAlchemy query
         return query.all()
+
+    def resolve_cuadros_by_linea_parada(self, info, idLinea, idParada):
+        cuadros = Cuadro.get_query(info).filter(
+            CuadroModel.id_linea==idLinea,
+            CuadroModel.id_parada==idParada
+        ).all()
+        return cuadros
 
     def resolve_parada_by_idlinea_c1_c2(self, info, idLinea, idCalle1, idCalle2):
         query = Interseccion.get_query(info)  # SQLAlchemy query
