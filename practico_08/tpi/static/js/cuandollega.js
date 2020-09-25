@@ -34,9 +34,7 @@ function cuandollega_http(d, l, p, days = 30){
         },
         success: function(data){
             console.log(data)
-            return
-            $('#response').text(JSON.stringify(data.data, null, 2))
-            return data.data
+            return data
         },//success
         error: function(XMLHttpRequest, textStatus, errorThrown) {
             console.log( "Request failed: " + textStatus + " "+ errorThrown );
@@ -118,12 +116,15 @@ $(function() {
         let p = $('#paradaInput').val()
         $.when( cuandollega_http( d, l, p ) )
             .then(function( data, textStatus, jqXHR ) {
-                if(!data.includes(':'))
+                let parts = data.substring(1).slice(0, -1).split(', ')
+                let first = parseInt(parts[0])
+                let second = parseInt(parts[1])
+                if(Number.isNaN(first) ||  Number.isNaN(second))
                     $('#arrive').html('Próximo servicio no encontrado.')
                 else{
-                    let arrHour = data.split(':')
-                    if(arrHour.length > 1)
-                        $('#arrive').html('Próximo servicio en: '+arrHour[1]+' minutos.')
+                    if( first < 0 )
+                        $('#arrive').html('El anterior servicio pasó hace: '+((first/60).toFixed())+' minutos. ')
+                    $('#arrive').html($('#arrive').html()+'Próximo servicio en: '+((second/60).toFixed())+' minutos.')
                 }
             });
     });
