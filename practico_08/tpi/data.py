@@ -287,62 +287,120 @@ class DatosStoredProcedure(object):
         try:
             query = "USE cuandollego;"
             query1 = "DROP PROCEDURE IF EXISTS CuandoLlego;"
-            query2 = """CREATE PROCEDURE CuandoLlego(deltaDias INT , fecha DATETIME, linea INT, parada INT)\n\
-            BEGIN\n\
-                DROP TEMPORARY TABLE IF EXISTS Segundos;\n\
-                CREATE TEMPORARY TABLE Segundos(Segundo INT);\n\
-                SET @contador = 0;\n\
-                SET @fecha = fecha;\n\
-                SET @idCuadroProxHorario = 0;\n\
-                SET @tipoDia = CASE WHEN WEEKDAY(fecha) < 5 THEN 0\n\
-                                    WHEN WEEKDAY(fecha) = 5 THEN 1\n\
-                                    ELSE 2\n\
-                                    END;\n\
-            \n\
-                SELECT id \n\
-                FROM cuadro\n\
-                WHERE id_linea = linea \n\
-                AND id_parada = parada\n\
-                AND Hora >= TIME(DATE_ADD(fecha, INTERVAL -10 minute)) \n\
-                -- AND tipo_dia = @tipoDia \n\
-                ORDER BY Hora\n\
-                LIMIT 1    \n\
-                INTO @idCuadroProxHorario;   \n\
-                \n\
-                IF @idCuadroProxHorario = 0 THEN\n\
-                    SELECT id \n\
-                    FROM cuadro\n\
-                    WHERE id_linea = linea \n\
-                    AND id_parada = parada\n\
-                    -- AND tipo_dia = @tipoDia\n\
-                    ORDER BY Hora\n\
-                    LIMIT 1\n\
-                    INTO @idCuadroProxHorario;\n\
-                    \n\
-                END IF;\n\
-            \n\
-                WHILE @contador <= deltaDias DO\n\
-                    SET @contador = @contador + 1;\n\
-                    SET @fecha = CASE\n\
-                            WHEN WEEKDAY(fecha) < 5 AND WEEKDAY(@fecha)<>0 THEN DATE_ADD(@fecha, INTERVAL -1 DAY)\n\
-                            WHEN WEEKDAY(fecha) < 5 AND WEEKDAY(@fecha)=0 THEN DATE_ADD(@fecha, INTERVAL -3 DAY)\n\
-                            ELSE DATE_ADD(@fecha, INTERVAL -7 DAY)\n\
-                            END;\n\
-            \n\
-                    INSERT INTO Segundos\n\
-                        SELECT TIMESTAMPDIFF(SECOND, @fecha , created_date)  \n\
-                        FROM boleto\n\
-                        WHERE (DATE(created_date) = DATE(@fecha)\n\
-                        OR DATE(created_date) = DATE(DATE_ADD(@fecha, INTERVAL 1 DAY)))\n\
-                        AND created_date > DATE_ADD(@fecha, INTERVAL -1 HOUR)\n\
-                        AND id_linea = linea\n\
-                        AND id_parada = parada\n\
-                        AND id_cuadro =  @idCuadroProxHorario\n\
-                        ORDER BY created_date\n\
-                        LIMIT 1;\n\
-                END WHILE;\n\
-                SELECT SEC_TO_TIME(AVG(Segundo)) TiempoParaArribo from Segundos;    \n\
-            END"""
+            query2 = """\
+CREATE PROCEDURE `CuandoLlego`(deltaDias INT , fecha DATETIME, linea INT, parada INT)
+BEGIN
+	DROP TEMPORARY TABLE IF EXISTS Segundos;
+	CREATE TEMPORARY TABLE Segundos(Segundo INT);
+    DROP TEMPORARY TABLE IF EXISTS CuandoLlegan;
+    CREATE TEMPORARY TABLE CuandoLlegan(Segundo INT);
+	SET @contador = 0;
+    SET @fecha = fecha;
+    SET @idCuadroProxHorario = 0;
+    SET @idCuadroSegundoHorario = 0;
+    SET @tipoDia = CASE WHEN WEEKDAY(fecha) < 5 THEN 0
+						WHEN WEEKDAY(fecha) = 5 THEN 1
+                        ELSE 2
+                        END;
+
+-- Seteando id del cuadro para el proximo colectivo
+    SELECT id
+    FROM cuadro
+    WHERE id_linea = linea
+    AND id_parada = parada
+    AND Hora >= TIME(DATE_ADD(fecha, INTERVAL -10 minute))
+    -- AND tipo_dia = @tipoDia
+    ORDER BY Hora
+    LIMIT 1
+    INTO @idCuadroProxHorario;
+
+    IF @idCuadroProxHorario = 0 THEN
+		SELECT id
+		FROM cuadro
+		WHERE id_linea = linea
+		AND id_parada = parada
+		-- AND tipo_dia = @tipoDia
+		ORDER BY Hora
+		LIMIT 1
+        INTO @idCuadroProxHorario;
+	END IF;
+
+-- seteando id del segundo proximo colectivo
+    SELECT id
+    FROM cuadro
+    WHERE id_linea = linea
+    AND id_parada = parada
+    AND Hora > (SELECT Hora from cuadro where id =  @idCuadroProxHorario limit 1)
+    -- AND tipo_dia = @tipoDia
+    ORDER BY Hora
+    LIMIT 1
+    INTO @idCuadroSegundoHorario;
+
+    IF @idCuadroSegundoHorario = 0 THEN
+		SELECT id
+		FROM cuadro
+		WHERE id_linea = linea
+		AND id_parada = parada
+		-- AND tipo_dia = @tipoDia
+		ORDER BY Hora
+		LIMIT 1
+        INTO @idCuadroSegundoHorario;
+	END IF;
+
+-- Determinando tiempo para proximo arribo
+	WHILE @contador <= deltaDias DO
+		SET @contador = @contador + 1;
+        SET @fecha = CASE
+				WHEN WEEKDAY(fecha) < 5 AND WEEKDAY(@fecha)<>0 THEN DATE_ADD(@fecha, INTERVAL -1 DAY)
+				WHEN WEEKDAY(fecha) < 5 AND WEEKDAY(@fecha)=0 THEN DATE_ADD(@fecha, INTERVAL -3 DAY)
+                ELSE DATE_ADD(@fecha, INTERVAL -7 DAY)
+                END;
+
+        INSERT INTO Segundos
+			SELECT TIMESTAMPDIFF(SECOND, @fecha , created_date)
+			FROM boleto
+			WHERE (DATE(created_date) = DATE(@fecha)
+            OR DATE(created_date) = DATE(DATE_ADD(@fecha, INTERVAL 1 DAY)))
+			AND created_date > DATE_ADD(@fecha, INTERVAL -1 HOUR)
+			AND id_linea = linea
+			AND id_parada = parada
+            AND id_cuadro =  @idCuadroProxHorario
+			ORDER BY created_date
+			LIMIT 1;
+	END WHILE;
+
+    INSERT INTO CuandoLlegan SELECT (AVG(Segundo)) TiempoParaArribo from Segundos;
+
+-- Determinando tiempo para segundo arribo
+	TRUNCATE TABLE Segundos;
+    SET @contador = 0;
+    SET @fecha = fecha;
+    WHILE @contador <= deltaDias DO
+		SET @contador = @contador + 1;
+        SET @fecha = CASE
+				WHEN WEEKDAY(fecha) < 5 AND WEEKDAY(@fecha)<>0 THEN DATE_ADD(@fecha, INTERVAL -1 DAY)
+				WHEN WEEKDAY(fecha) < 5 AND WEEKDAY(@fecha)=0 THEN DATE_ADD(@fecha, INTERVAL -3 DAY)
+                ELSE DATE_ADD(@fecha, INTERVAL -7 DAY)
+                END;
+
+        INSERT INTO Segundos
+			SELECT TIMESTAMPDIFF(SECOND, @fecha , created_date)
+			FROM boleto
+			WHERE (DATE(created_date) = DATE(@fecha)
+            OR DATE(created_date) = DATE(DATE_ADD(@fecha, INTERVAL 1 DAY)))
+			AND created_date > DATE_ADD(@fecha, INTERVAL -1 HOUR)
+			AND id_linea = linea
+			AND id_parada = parada
+            AND id_cuadro =  @idCuadroSegundoHorario
+			ORDER BY created_date
+			LIMIT 1;
+	END WHILE;
+
+    INSERT INTO CuandoLlegan SELECT (AVG(Segundo)) TiempoParaArribo from Segundos;
+
+    SELECT Segundo FROM CuandoLlegan LIMIT 2;
+
+END;"""
             connection = engine.raw_connection()
             cursor = connection.cursor()
             cursor.execute(query)
