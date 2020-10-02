@@ -45,3 +45,16 @@ def r_lineas():
 
 if __name__ == '__main__':
     app.run()
+
+# [] Selector linea y selector parada en Cuadro de Horarios
+# [] Gráfico boletos últimos 30 días día vs. noche
+# [] Agregar atributo tipo_boleto (Medio boleto / Diferencial o Monedas / Normal / Jubilado)
+# [] Gráfico tipos de boleto en últimos 30 días
+# [] Cantidad de boletos en cada parada de una línea en algún día (u hoy)
+# [] Gráfico en 24 horas de un día de una línea en una parada
+# [] Agregar atributo género ¿¿¿ a los boletos para algunas tarjetas (las personalizadas)
+# [] Gráfico proporción por género de día
+# [] Gráfico proporción por género de noche
+# [] Paradas con más boletos
+# [] Línea con más boletos
+# [] Gráfico porcentaje día vs noche por boletos gral.
