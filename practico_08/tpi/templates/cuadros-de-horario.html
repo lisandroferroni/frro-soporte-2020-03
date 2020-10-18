@@ -1,0 +1,94 @@
+{% set active_page = "lineas" %}
+{% extends "base.html" %}
+
+{% block header %}
+  <h1>{% block title %}Cuadro de Horarios{% endblock %}</h1>
+{% endblock %}
+
+{% block precontent %}
+    <h2 class="text-center text-5xl text-teal-500">Cuadro de Horarios - Cuando llegó</h2>
+    <h2 class="text-center text-2xl text-teal-500">Informes por cuadro de horario</h2>
+{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-12 gap-6">
+
+  <div class="col-span-4">
+    <h3 class="text-4xl text-black-500 mb-5">Cuadro de Horarios</h3>
+    <div class="mb-5">
+
+        <div class="mb-6">
+            <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="sLineas">
+                Linea de colectivo
+            </label>
+            <div class="relative h-12">
+                <select class="search_result absolute bg-gray-200 border border-gray-200 text-gray-700 inset-y-30 right-0 left-0 py-3 px-4 rounded w-full" id="sLineas">
+                    <option selected disabled>Seleccionar linea de colectivo</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="mb-6">
+            <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="calle">
+                Calle
+            </label>
+            <div class="relative h-12">
+                <select class="search_result absolute bg-gray-200 border border-gray-200 text-gray-700 inset-y-30 right-0 left-0 py-3 px-4 rounded w-full" id="calle">
+                    <option selected disabled>Seleccionar linea primero</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="mb-6">
+            <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="calleInterseccion">
+                Calle intersección
+            </label>
+            <div class="relative h-12">
+                <select class="search_result absolute bg-gray-200 border border-gray-200 text-gray-700 inset-y-30 right-0 left-0 py-3 px-4 rounded w-full" id="calleInterseccion">
+                    <option selected disabled>Seleccionar parada primero</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="mb-6">
+            <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="paradaInput">
+                Parada
+            </label>
+            <input value="" name="parada" type="number" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="paradaInput" />
+        </div>
+
+        <div class="mb-7">
+            <button class="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded uppercase" id="consultar">
+              Consultar
+            </button>
+        </div>
+
+    </div>
+  </div>
+  <div class="col-span-1"></div>
+  <div class="col-span-7">
+    <table class="table-auto" id="#cuadrohorario">
+      <thead>
+        <tr>
+          <th class="px-4 py-2">Linea</th>
+          <th class="px-4 py-2">Parada</th>
+          <th class="px-4 py-2">Horario cuadro de horario</th>
+          <th class="px-4 py-2">Horario empírico</th>
+          <th class="px-4 py-2">Delta tiempo</th>
+        </tr>
+      </thead>
+      <tbody id="tbody">
+          <tr class="text-center">
+            <td class="border px-4 py-2" colspan="5">Seleccionar una parada de colectivo</td>
+          </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{url_for('static', filename='js/parada_getter.js') }}"></script>
+<script src="{{url_for('static', filename='js/cuadrohorario.js') }}"></script>
+{% endblock %}
+

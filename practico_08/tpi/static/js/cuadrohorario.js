@@ -1,48 +1,7 @@
-function graphql_resolve(graphQ){
-    console.log('in graphql_resolve')
-    let arrOpen = graphQ.split('{ ').map((r, i) => {
-        return r+'{\n'+('\t'.repeat(i+1))
-    }).join('{ ')
-    console.log(arrOpen)
-    $('#query').text(arrOpen)
-    $('#query').text(graphQ)
-    return $.ajax({
-        type : 'GET',
-        url: $SCRIPT_ROOT + '/graphql',
-        data: {
-            query: graphQ
-        },
-        success: function(data){
-            $('#response').text(JSON.stringify(data.data, null, 2))
-            return data.data
-        },//success
-        error: function(XMLHttpRequest, textStatus, errorThrown) {
-            console.log( "Request failed: " + textStatus + " "+ errorThrown );
-        }//error
-    });//$ajax
-}
-
-function cuandollega_http(d, l, p, days = 30){
-    return $.ajax({
-        type : 'GET',
-        url: $SCRIPT_ROOT + '/cuandoLlego',
-        data: {
-            deltaDias: days,
-            fecha: d,
-            linea: l,
-            parada: p
-        },
-        success: function(data){
-            return data
-        },//success
-        error: function(XMLHttpRequest, textStatus, errorThrown) {
-            console.log( "Request failed: " + textStatus + " "+ errorThrown );
-        }//error
-    });//$ajax
-}
-
 function cuandoLlega(l, p, cuadro, i = 0){
     console.log(cuadro[i])
+    if(i === 0)
+        $('#tbody').html('')
     if(typeof cuadro[i] === 'undefined')
         return
     let cuadroParts = cuadro[i].hora.split(':')
@@ -66,12 +25,22 @@ function cuandoLlega(l, p, cuadro, i = 0){
     });
 }
 
-$(function() {
-    var graphQ = `{ cuadrosByLineaParada(idLinea:1, idParada:1104){ id idLinea idParada hora }}`
+function cuandoLlega_gql(idL, idP){
+    //Populate cuadro horarios
+    console.log(idL, idP)
+    var graphQ = `{ cuadrosByLineaParada(idLinea:`+idL+`, idParada:`+idP+`){ id idLinea idParada hora }}`
     $.when( graphql_resolve(graphQ) ).then(function( data, textStatus, jqXHR ) {
-        let l = 1
-        let p = 1104
         console.log(data.data)
-        cuandoLlega(l, p, data.data.cuadrosByLineaParada)
+        if(data.data.length === 0)
+            $('#tbody:last-child').append('<tr class="text-center">'+
+                '<td class="border px-4 py-2" colspan="5">No hay cuadro de horarios para la parada seleccionada.</td>'+
+            '</tr>');
+        cuandoLlega(idL, idP, data.data.cuadrosByLineaParada)
     });
+}
+
+$('button#consultar').bind('click', function() {
+    let l = $('#sLineas').val()
+    let p = $('#paradaInput').val()
+    cuandoLlega_gql(l, p)
 })

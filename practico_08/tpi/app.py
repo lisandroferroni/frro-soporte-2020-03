@@ -40,13 +40,13 @@ def r_paradas_de_colectivo():
 
 @app.route('/lineas')
 def r_lineas():
-    return render_template('lineas.html')
+    return render_template('cuadros-de-horario.html')
 
 
 if __name__ == '__main__':
     app.run()
 
-# [] Selector linea y selector parada en Cuadro de Horarios
+# [X] Selector linea y selector parada en Cuadro de Horarios
 # [] Gráfico boletos últimos 30 días día vs. noche
 # [] Agregar atributo tipo_boleto (Medio boleto / Diferencial o Monedas / Normal / Jubilado)
 # [] Gráfico tipos de boleto en últimos 30 días
