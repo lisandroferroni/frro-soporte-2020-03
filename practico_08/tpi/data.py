@@ -263,6 +263,11 @@ class DatosCuadro(object):
     def getCuadro(self, id_cuadro):
         return self.session.query(CuadroModel).get(id_cuadro)
 
+    def getCuadroByLineaParada(self, id_linea, id_parada):
+        return self.session.query(CuadroModel).\
+            filter(CuadroModel.id_linea == id_linea).\
+            filter(CuadroModel.id_parada == id_parada).all()
+
 
 class DatosStoredProcedure(object):
     def __init__(self):

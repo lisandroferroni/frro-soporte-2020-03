@@ -153,6 +153,9 @@ class CuadroNegocio(object):
     def alta(self, cuadro):
         self.cuadros.alta(cuadro)
 
+    def getCuadroByLineaParada(self, numLinea, numParada):
+        return self.cuadros.getCuadroByLineaParada(numLinea, numParada)
+
 
 class StoredProcedureNegocio(object):
     def __init__(self):
@@ -314,70 +317,90 @@ def boletos():
                     negocioB.alta(boleto)
 
 def crearBoletos():
-    dia = datetime(2020, 9, 24, 23, 7, 0)
+    numLinea = 1
+    numParada = 1104
+    cantidadDeBoletosPorParada = 20
 
-    #print(dia)
     negocioB = BoletoNegocio()
-    for i in range(50):
-        dia = dia - timedelta(days=1)
-        dates = normal_dates((dia - timedelta(minutes=(5))).strftime("%Y-%m-%d %H:%M:%S"), (dia + timedelta(minutes=(5))).strftime("%Y-%m-%d %H:%M:%S"), 20)
-        for d in dates:
-            boleto = BoletoModel(id_linea=1, id_parada=1104, created_date=d, id_cuadro=27)
-            negocioB.alta(boleto)
-            print(d)
+    negocioC = CuadroNegocio()
+    cuadro = negocioC.getCuadroByLineaParada(numLinea, numParada)
+
+    for horario in cuadro:
+        now = datetime.now()
+        dia = datetime(now.year, now.month, now.day, horario.hora.hour, horario.hora.minute, 0)
+        id_cuadro = horario.id
+        print(dia)
+
+        for i in range(50):
+            dia = dia - timedelta(days=1)
+            horarioReal = datetime.strptime(normal_dates((dia - timedelta(minutes=(2))).strftime("%Y-%m-%d %H:%M:%S"), (dia + timedelta(minutes=(15))).strftime("%Y-%m-%d %H:%M:%S"), 1)[0], "%Y-%m-%d %H:%M:%S")
+            dates = normal_dates((horarioReal - timedelta(minutes=(1))).strftime("%Y-%m-%d %H:%M:%S"), (horarioReal + timedelta(minutes=(1))).strftime("%Y-%m-%d %H:%M:%S"), cantidadDeBoletosPorParada)
+            for d in dates:
+                boleto = BoletoModel(id_linea=numLinea, id_parada=numParada, created_date=d, id_cuadro=id_cuadro)
+                negocioB.alta(boleto)
+                print(d)
 
 def crearCuadro():
     negocioC = CuadroNegocio()
 
-    cuadro = CuadroModel(id_linea=1, id_parada=1104, hora=time(5, 18))
-    cuadro1 = CuadroModel(id_linea=1, id_parada=1104, hora=time(6, 35))
-    cuadro2 = CuadroModel(id_linea=1, id_parada=1104, hora=time(7, 23))
-    cuadro3 = CuadroModel(id_linea=1, id_parada=1104, hora=time(8, 10))
-    cuadro4 = CuadroModel(id_linea=1, id_parada=1104, hora=time(8, 55))
-    cuadro5 = CuadroModel(id_linea=1, id_parada=1104, hora=time(9, 40))
-    cuadro6 = CuadroModel(id_linea=1, id_parada=1104, hora=time(10, 26))
-    cuadro7 = CuadroModel(id_linea=1, id_parada=1104, hora=time(11, 12))
-    cuadro8 = CuadroModel(id_linea=1, id_parada=1104, hora=time(11, 58))
-    cuadro9 = CuadroModel(id_linea=1, id_parada=1104, hora=time(12, 44))
-    cuadro10 = CuadroModel(id_linea=1, id_parada=1104, hora=time(13, 30))
-    cuadro11 = CuadroModel(id_linea=1, id_parada=1104, hora=time(14, 16))
-    cuadro12 = CuadroModel(id_linea=1, id_parada=1104, hora=time(15, 2))
-    cuadro13 = CuadroModel(id_linea=1, id_parada=1104, hora=time(15, 47))
-    cuadro14 = CuadroModel(id_linea=1, id_parada=1104, hora=time(16, 19))
-    cuadro15 = CuadroModel(id_linea=1, id_parada=1104, hora=time(16, 51))
-    cuadro16 = CuadroModel(id_linea=1, id_parada=1104, hora=time(17, 23))
-    cuadro17 = CuadroModel(id_linea=1, id_parada=1104, hora=time(18, 3))
-    cuadro18 = CuadroModel(id_linea=1, id_parada=1104, hora=time(18, 54))
-    cuadro19 = CuadroModel(id_linea=1, id_parada=1104, hora=time(19, 35))
-    cuadro20 = CuadroModel(id_linea=1, id_parada=1104, hora=time(20, 19))
-    cuadro21 = CuadroModel(id_linea=1, id_parada=1104, hora=time(21, 5))
-    cuadro22 = CuadroModel(id_linea=1, id_parada=1104, hora=time(21, 51))
-    cuadro23 = CuadroModel(id_linea=1, id_parada=1104, hora=time(23, 7))
+    cuadro1104 = []
+    cuadro1104.append(CuadroModel(id_linea=1, id_parada=1104, hora=time(5, 18)))
+    cuadro1104.append(CuadroModel(id_linea=1, id_parada=1104, hora=time(6, 35)))
+    cuadro1104.append(CuadroModel(id_linea=1, id_parada=1104, hora=time(7, 23)))
+    cuadro1104.append(CuadroModel(id_linea=1, id_parada=1104, hora=time(8, 10)))
+    cuadro1104.append(CuadroModel(id_linea=1, id_parada=1104, hora=time(8, 55)))
+    cuadro1104.append(CuadroModel(id_linea=1, id_parada=1104, hora=time(9, 40)))
+    cuadro1104.append(CuadroModel(id_linea=1, id_parada=1104, hora=time(10, 26)))
+    cuadro1104.append(CuadroModel(id_linea=1, id_parada=1104, hora=time(11, 12)))
+    cuadro1104.append(CuadroModel(id_linea=1, id_parada=1104, hora=time(11, 58)))
+    cuadro1104.append(CuadroModel(id_linea=1, id_parada=1104, hora=time(12, 44)))
+    cuadro1104.append(CuadroModel(id_linea=1, id_parada=1104, hora=time(13, 30)))
+    cuadro1104.append(CuadroModel(id_linea=1, id_parada=1104, hora=time(14, 16)))
+    cuadro1104.append(CuadroModel(id_linea=1, id_parada=1104, hora=time(15, 2)))
+    cuadro1104.append(CuadroModel(id_linea=1, id_parada=1104, hora=time(15, 47)))
+    cuadro1104.append(CuadroModel(id_linea=1, id_parada=1104, hora=time(16, 19)))
+    cuadro1104.append(CuadroModel(id_linea=1, id_parada=1104, hora=time(16, 51)))
+    cuadro1104.append(CuadroModel(id_linea=1, id_parada=1104, hora=time(17, 23)))
+    cuadro1104.append(CuadroModel(id_linea=1, id_parada=1104, hora=time(18, 3)))
+    cuadro1104.append(CuadroModel(id_linea=1, id_parada=1104, hora=time(18, 54)))
+    cuadro1104.append(CuadroModel(id_linea=1, id_parada=1104, hora=time(19, 35)))
+    cuadro1104.append(CuadroModel(id_linea=1, id_parada=1104, hora=time(20, 19)))
+    cuadro1104.append(CuadroModel(id_linea=1, id_parada=1104, hora=time(21, 5)))
+    cuadro1104.append(CuadroModel(id_linea=1, id_parada=1104, hora=time(21, 51)))
+    cuadro1104.append(CuadroModel(id_linea=1, id_parada=1104, hora=time(23, 7)))
 
-    negocioC.alta(cuadro)
-    negocioC.alta(cuadro1)
-    negocioC.alta(cuadro2)
-    negocioC.alta(cuadro3)
-    negocioC.alta(cuadro4)
-    negocioC.alta(cuadro5)
-    negocioC.alta(cuadro6)
-    negocioC.alta(cuadro7)
-    negocioC.alta(cuadro8)
-    negocioC.alta(cuadro9)
-    negocioC.alta(cuadro10)
-    negocioC.alta(cuadro11)
-    negocioC.alta(cuadro12)
-    negocioC.alta(cuadro13)
-    negocioC.alta(cuadro14)
-    negocioC.alta(cuadro15)
-    negocioC.alta(cuadro16)
-    negocioC.alta(cuadro17)
-    negocioC.alta(cuadro18)
-    negocioC.alta(cuadro19)
-    negocioC.alta(cuadro20)
-    negocioC.alta(cuadro21)
-    negocioC.alta(cuadro22)
-    negocioC.alta(cuadro23)
+    #for cuadroObj in cuadro1104:
+    #    negocioC.alta(cuadroObj)
+
+    cuadro1141 = []
+    cuadro1141.append(CuadroModel(id_linea=1, id_parada=1141, hora=time(5, 22)))
+    cuadro1141.append(CuadroModel(id_linea=1, id_parada=1141, hora=time(6, 40)))
+    cuadro1141.append(CuadroModel(id_linea=1, id_parada=1141, hora=time(7, 28)))
+    cuadro1141.append(CuadroModel(id_linea=1, id_parada=1141, hora=time(8, 15)))
+    cuadro1141.append(CuadroModel(id_linea=1, id_parada=1141, hora=time(9, 00)))
+    cuadro1141.append(CuadroModel(id_linea=1, id_parada=1141, hora=time(9, 45)))
+    cuadro1141.append(CuadroModel(id_linea=1, id_parada=1141, hora=time(10, 31)))
+    cuadro1141.append(CuadroModel(id_linea=1, id_parada=1141, hora=time(11, 17)))
+    cuadro1141.append(CuadroModel(id_linea=1, id_parada=1141, hora=time(12, 3)))
+    cuadro1141.append(CuadroModel(id_linea=1, id_parada=1141, hora=time(12, 49)))
+    cuadro1141.append(CuadroModel(id_linea=1, id_parada=1141, hora=time(13, 35)))
+    cuadro1141.append(CuadroModel(id_linea=1, id_parada=1141, hora=time(14, 21)))
+    cuadro1141.append(CuadroModel(id_linea=1, id_parada=1141, hora=time(15, 7)))
+    cuadro1141.append(CuadroModel(id_linea=1, id_parada=1141, hora=time(15, 52)))
+    cuadro1141.append(CuadroModel(id_linea=1, id_parada=1141, hora=time(16, 24)))
+    cuadro1141.append(CuadroModel(id_linea=1, id_parada=1141, hora=time(16, 56)))
+    cuadro1141.append(CuadroModel(id_linea=1, id_parada=1141, hora=time(17, 28)))
+    cuadro1141.append(CuadroModel(id_linea=1, id_parada=1141, hora=time(18, 8)))
+    cuadro1141.append(CuadroModel(id_linea=1, id_parada=1141, hora=time(18, 59)))
+    cuadro1141.append(CuadroModel(id_linea=1, id_parada=1141, hora=time(19, 40)))
+    cuadro1141.append(CuadroModel(id_linea=1, id_parada=1141, hora=time(20, 24)))
+    cuadro1141.append(CuadroModel(id_linea=1, id_parada=1141, hora=time(21, 10)))
+    cuadro1141.append(CuadroModel(id_linea=1, id_parada=1141, hora=time(21, 56)))
+    cuadro1141.append(CuadroModel(id_linea=1, id_parada=1141, hora=time(23, 12)))
+
+    for cuadroObj in cuadro1141:
+        negocioC.alta(cuadroObj)
+
 
 def createSP():
     negocioSP = StoredProcedureNegocio()
@@ -394,6 +417,7 @@ def createSP():
 if __name__ == '__main__':
     #altas()
     #boletos()
-    #crearBoletos()
+    crearBoletos()
     #crearCuadro()
-    createSP()
+    #createSP()
+    pass
