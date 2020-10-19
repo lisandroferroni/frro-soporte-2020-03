@@ -42,19 +42,25 @@ def r_paradas_de_colectivo():
 def r_lineas():
     return render_template('cuadros-de-horario.html')
 
+@app.route('/boletos')
+def r_boletos():
+    return render_template('boletos.html')
+
 
 if __name__ == '__main__':
     app.run()
 
 # [X] Selector linea y selector parada en Cuadro de Horarios
-# [] Gráfico boletos últimos 30 días día vs. noche
-# [] Agregar atributo tipo_boleto (Medio boleto / Diferencial o Monedas / Normal / Jubilado)
-# [] Gráfico tipos de boleto en últimos 30 días
+# [X] Gráfico boletos por meses
+# [X] Agregar atributo tipo_boleto (Medio boleto / Diferencial o Monedas / Normal / Jubilado)
+# [X] Gráfico tipos de boleto en últimos 30 días
 # [] Cantidad de boletos en cada parada de una línea en algún día (u hoy)
 # [] Gráfico en 24 horas de un día de una línea en una parada
-# [] Agregar atributo género ¿¿¿ a los boletos para algunas tarjetas (las personalizadas)
-# [] Gráfico proporción por género de día
-# [] Gráfico proporción por género de noche
+# [X] Agregar atributo género ¿¿¿ a los boletos para algunas tarjetas (las personalizadas)
+# [X] Gráfico proporción boletos por género de día
+# [X] Gráfico proporción boletos por género de noche
 # [] Paradas con más boletos
 # [] Línea con más boletos
-# [] Gráfico porcentaje día vs noche por boletos gral.
+# [X] Gráfico porcentaje día vs noche por boletos gral.
+# [] Borrar text Cuando llegó
+# [] Cuadro horario fix time format.
