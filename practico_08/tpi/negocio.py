@@ -319,7 +319,7 @@ def boletos():
 def crearBoletos():
     numLinea = 1
     numParada = 1104
-    cantidadDeBoletosPorParada = 20
+    cantidadDeBoletosPorParada = 3
 
     negocioB = BoletoNegocio()
     negocioC = CuadroNegocio()
@@ -336,7 +336,22 @@ def crearBoletos():
             horarioReal = datetime.strptime(normal_dates((dia - timedelta(minutes=(2))).strftime("%Y-%m-%d %H:%M:%S"), (dia + timedelta(minutes=(15))).strftime("%Y-%m-%d %H:%M:%S"), 1)[0], "%Y-%m-%d %H:%M:%S")
             dates = normal_dates((horarioReal - timedelta(minutes=(1))).strftime("%Y-%m-%d %H:%M:%S"), (horarioReal + timedelta(minutes=(1))).strftime("%Y-%m-%d %H:%M:%S"), cantidadDeBoletosPorParada)
             for d in dates:
-                boleto = BoletoModel(id_linea=numLinea, id_parada=numParada, created_date=d, id_cuadro=id_cuadro)
+                genero = 0
+                numRandom = random.random()
+
+                if (horarioReal.hour >= 20 or horarioReal.hour < 7):
+                    if (numRandom > 0.2):
+                        genero = 0
+                    else:
+                        genero = 1
+
+                else:
+                    if (numRandom > 0.4):
+                        genero = 0
+                    else:
+                        genero = 1
+
+                boleto = BoletoModel(id_linea=numLinea, id_parada=numParada, created_date=d, id_cuadro=id_cuadro, genero=genero)
                 negocioB.alta(boleto)
                 print(d)
 

@@ -74,6 +74,7 @@ class Query(graphene.ObjectType):
     parada_by_idlinea_c1_c2 = graphene.List(Interseccion, idLinea=graphene.Int(), idCalle1=graphene.Int(), idCalle2=graphene.Int())
     boleto_by_linea_parada = graphene.List(Boleto, idLinea=graphene.Int(), idParada=graphene.Int(), deltaDias=graphene.Int())
     boletos = graphene.List(Boleto)
+    boletos_by_deltaDias = graphene.List(Boleto, deltaDias=graphene.Int())
     cuadros = graphene.List(Cuadro)
     cuadros_by_linea_parada = graphene.List(Cuadro, idLinea=graphene.Int(), idParada=graphene.Int())
     all_calles = SQLAlchemyConnectionField(Calle)
@@ -122,6 +123,17 @@ class Query(graphene.ObjectType):
         query = Boleto.get_query(info)  # SQLAlchemy query
         print(query.statement.compile(compile_kwargs={"literal_binds": True}))
         return query.all()
+
+
+    def resolve_boletos_by_deltaDias(self, info, deltaDias):
+        #weekday = datetime.datetime.today().weekday()
+        fecha_ahora = datetime.utcnow()
+        fecha_min = fecha_ahora.date() + timedelta(days=-deltaDias)
+        boletos = Boleto.get_query(info).filter(
+            BoletoModel.created_date < fecha_ahora,
+            BoletoModel.created_date > fecha_min
+        ).all()
+        return boletos
 
     def resolve_cuadros(self, info):
         query = Cuadro.get_query(info)  # SQLAlchemy query
