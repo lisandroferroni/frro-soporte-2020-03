@@ -14,8 +14,8 @@ function cuandoLlega(l, p, cuadro, lName, i = 0){
         $('#tbody:last-child').append('<tr>'+
           '<td class="border px-4 py-2">'+lName+'</td>'+
           '<td class="border px-4 py-2">'+p+'</td>'+
-          '<td class="border px-4 py-2">'+d.slice(0, -8)+'</td>'+
-          '<td class="border px-4 py-2">'+d_format(new Date(date.getTime() + (first*1000))).slice(0, -8)+'</td>'+
+          '<td class="border px-4 py-2">'+d.slice(0, -8).slice(11)+'</td>'+
+          '<td class="border px-4 py-2">'+d_format(new Date(date.getTime() + (first*1000))).slice(0, -8).slice(11)+'</td>'+
           '<td class="border px-4 py-2">'+((first/60).toFixed())+' minutos</td>'+
         '</tr>');
         if(i < 24)
