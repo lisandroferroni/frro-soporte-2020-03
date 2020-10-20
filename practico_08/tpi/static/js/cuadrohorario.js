@@ -1,5 +1,4 @@
-function cuandoLlega(l, p, cuadro, i = 0){
-    console.log(cuadro[i])
+function cuandoLlega(l, p, cuadro, lName, i = 0){
     if(i === 0)
         $('#tbody').html('')
     if(typeof cuadro[i] === 'undefined')
@@ -13,34 +12,32 @@ function cuandoLlega(l, p, cuadro, i = 0){
         let first = parseInt(parts[0])
         let second = parseInt(parts[1])
         $('#tbody:last-child').append('<tr>'+
-          '<td class="border px-4 py-2">'+l+'</td>'+
+          '<td class="border px-4 py-2">'+lName+'</td>'+
           '<td class="border px-4 py-2">'+p+'</td>'+
-          '<td class="border px-4 py-2">'+d+'</td>'+
-          '<td class="border px-4 py-2">'+d_format(new Date(date.getTime() + (first*1000)))+'</td>'+
+          '<td class="border px-4 py-2">'+d.slice(0, -8)+'</td>'+
+          '<td class="border px-4 py-2">'+d_format(new Date(date.getTime() + (first*1000))).slice(0, -8)+'</td>'+
           '<td class="border px-4 py-2">'+((first/60).toFixed())+' minutos</td>'+
         '</tr>');
-        console.log('date: ',d,' próximo: ',data)
         if(i < 24)
-            cuandoLlega(l, p, cuadro, i+1)
+            cuandoLlega(l, p, cuadro, lName, i+1)
     });
 }
 
-function cuandoLlega_gql(idL, idP){
+function cuandoLlega_gql(idL, idP, lName){
     //Populate cuadro horarios
-    console.log(idL, idP)
     var graphQ = `{ cuadrosByLineaParada(idLinea:`+idL+`, idParada:`+idP+`){ id idLinea idParada hora }}`
     $.when( graphql_resolve(graphQ) ).then(function( data, textStatus, jqXHR ) {
-        console.log(data.data)
         if(data.data.length === 0)
             $('#tbody:last-child').append('<tr class="text-center">'+
                 '<td class="border px-4 py-2" colspan="5">No hay cuadro de horarios para la parada seleccionada.</td>'+
             '</tr>');
-        cuandoLlega(idL, idP, data.data.cuadrosByLineaParada)
+        cuandoLlega(idL, idP, data.data.cuadrosByLineaParada, lName)
     });
 }
 
 $('button#consultar').bind('click', function() {
     let l = $('#sLineas').val()
+    let lName = $('#sLineas option:selected').text()
     let p = $('#paradaInput').val()
-    cuandoLlega_gql(l, p)
+    cuandoLlega_gql(l, p, lName)
 })
