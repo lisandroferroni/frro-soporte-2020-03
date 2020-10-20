@@ -10,6 +10,7 @@ $(function() {
         $('#arrive').html();
         $.when( cuandollega_http( d, l, p ) )
             .then(function( data, textStatus, jqXHR ) {
+                $('#arrive').html('')
                 let parts = data.substring(1).slice(0, -1).split(', ')
                 let first = parseInt(parts[0])
                 let second = parseInt(parts[1])
