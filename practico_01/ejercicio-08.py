@@ -5,7 +5,7 @@ import math
 # hola -> ho
 # verde -> ver
 def mitad(palabra):
-    return palabra[:math.ceil(len(palabra)/2)]
+    return palabra[0:math.ceil(len(palabra)/2)]
 
 
 assert mitad("hola") == "ho"
