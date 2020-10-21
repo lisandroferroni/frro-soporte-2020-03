@@ -318,8 +318,9 @@ def boletos():
 
 def crearBoletos():
     numLinea = 1
-    numParada = 1104
+    numParada = 1141
     cantidadDeBoletosPorParada = 3
+    cantidadDiasACargar = 125
 
     negocioB = BoletoNegocio()
     negocioC = CuadroNegocio()
@@ -331,27 +332,39 @@ def crearBoletos():
         id_cuadro = horario.id
         print(dia)
 
-        for i in range(50):
+        for i in range(cantidadDiasACargar):
             dia = dia - timedelta(days=1)
             horarioReal = datetime.strptime(normal_dates((dia - timedelta(minutes=(2))).strftime("%Y-%m-%d %H:%M:%S"), (dia + timedelta(minutes=(15))).strftime("%Y-%m-%d %H:%M:%S"), 1)[0], "%Y-%m-%d %H:%M:%S")
             dates = normal_dates((horarioReal - timedelta(minutes=(1))).strftime("%Y-%m-%d %H:%M:%S"), (horarioReal + timedelta(minutes=(1))).strftime("%Y-%m-%d %H:%M:%S"), cantidadDeBoletosPorParada)
             for d in dates:
                 genero = 0
-                numRandom = random.random()
+                tipo = 'Normal'
+
+                probGenero = random.random()
+                probTipo = random.random()
 
                 if (horarioReal.hour >= 20 or horarioReal.hour < 7):
-                    if (numRandom > 0.2):
+                    if (probGenero > 0.2):
                         genero = 0
                     else:
                         genero = 1
-
                 else:
-                    if (numRandom > 0.4):
+                    if (probGenero > 0.4):
                         genero = 0
                     else:
                         genero = 1
 
-                boleto = BoletoModel(id_linea=numLinea, id_parada=numParada, created_date=d, id_cuadro=id_cuadro, genero=genero)
+                if (0 < probTipo <= 0.1):
+                    tipo = 'Medio'
+                elif (0.1 < probTipo <= 0.2):
+                    tipo = 'Pase'
+                elif (0.2 < probTipo <= 0.28):
+                    tipo = 'Jubilado'
+                elif (0.28 < probTipo <= 1):
+                    tipo = 'Normal'
+
+
+                boleto = BoletoModel(id_linea=numLinea, id_parada=numParada, created_date=d, id_cuadro=id_cuadro, genero=genero, tipo=tipo)
                 negocioB.alta(boleto)
                 print(d)
 
