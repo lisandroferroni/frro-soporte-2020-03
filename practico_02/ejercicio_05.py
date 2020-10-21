@@ -5,4 +5,21 @@ from practico_02.ejercicio_04 import Estudiante
 
 
 def organizar_estudiantes(estudiantes):
-    pass
+    diccionario = {}
+    for e in estudiantes:
+        if e.carrera in diccionario:
+            diccionario[e.carrera] = diccionario[e.carrera] + 1
+        else:
+            diccionario[e.carrera] = 1
+    return diccionario
+
+estudiante1 = Estudiante("ISI", 2015,100,2,"Juan Diaz", 23, "H", 72, 1.73)
+estudiante2 = Estudiante("Q", 2015,100,2,"Juan Diaz", 23, "H", 72, 1.73)
+estudiante3 = Estudiante("Q", 2015,100,2,"Juan Diaz", 23, "H", 72, 1.73)
+estudiante4 = Estudiante("IM", 2015,100,2,"Juan Diaz", 23, "H", 72, 1.73)
+
+
+"""
+carreras = organizar_estudiantes([estudiante1,estudiante2,estudiante3,estudiante4])
+print(carreras)
+"""

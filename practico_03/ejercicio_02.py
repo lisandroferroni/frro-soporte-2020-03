@@ -3,19 +3,30 @@
 
 import datetime
 
-from practico_03.ejercicio_01 import reset_tabla
-
+from ejercicio_01 import *
 
 def agregar_persona(nombre, nacimiento, dni, altura):
-    return 0
+    try:
+        mycursor = mydb.cursor()
+        mycursor.execute(f"INSERT INTO `persona` (`IdPersona`, `Nombre`, `FechaNacimiento`, `DNI`, `Altura`) VALUES (NULL, '{nombre}', '{nacimiento}', '{dni}', '{altura}')")
+        mydb.commit()
+        query_result = mycursor.fetchone()
+    except mysql.connector.Error as error:
+        print("Error al registrar persona: {}".format(error))
+    else:
+        return mycursor.lastrowid
+    finally:
+        if (mydb.is_connected()):
+            mycursor.close()
+        pass
 
 
-@reset_tabla
-def pruebas():
+
+"""def pruebas():
     id_juan = agregar_persona('juan perez', datetime.datetime(1988, 5, 15), 32165498, 180)
+    print(id_juan)
     id_marcela = agregar_persona('marcela gonzalez', datetime.datetime(1980, 1, 25), 12164492, 195)
-    assert id_juan > 0
-    assert id_marcela > id_juan
+    print(id_marcela)
+    pass
 
-if __name__ == '__main__':
-    pruebas()
+pruebas()"""
