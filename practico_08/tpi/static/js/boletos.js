@@ -137,7 +137,7 @@ var ctx = document.getElementById('mes').getContext('2d');
 var mesesChart = new Chart(ctx, configM)
 
 
-var configGF = {
+var configDia = {
     type: 'pie',
     data: {
         datasets: [{
@@ -149,8 +149,8 @@ var configGF = {
             label: 'My dataset' // for legend
         }],
         labels: [
-            'Día',
-            'Noche'
+            'Masculino',
+            'Femenino'
         ]
     },
     options: {
@@ -158,14 +158,14 @@ var configGF = {
         responsive: true,
         title: {
             display: true,
-            text: 'Boletos marcados por género feminino en el día'
+            text: 'Boletos marcados por género durante el día'
         }
     }
 };
-var ctx = document.getElementById('diaF').getContext('2d');
-var diaFChart = new Chart(ctx, configGF)
+var ctx = document.getElementById('diaG').getContext('2d');
+var diaFChart = new Chart(ctx, configDia)
 
-var configGM = {
+var configNoche = {
     type: 'pie',
     data: {
         datasets: [{
@@ -177,8 +177,8 @@ var configGM = {
             label: 'My dataset' // for legend
         }],
         labels: [
-            'Día',
-            'Noche'
+            'Masculino',
+            'Femenino'
         ]
     },
     options: {
@@ -186,12 +186,12 @@ var configGM = {
         responsive: true,
         title: {
             display: true,
-            text: 'Boletos marcados por género feminino en el día'
+            text: 'Boletos marcados por género durante la noche'
         }
     }
 };
-var ctx = document.getElementById('diaM').getContext('2d');
-var diaMChart = new Chart(ctx, configGM)
+var ctx = document.getElementById('nocheG').getContext('2d');
+var nocheGChart = new Chart(ctx, configNoche)
 
 function getBoletos(d){
     var graphQ = `query{
@@ -220,7 +220,7 @@ function getBoletos(d){
         configD.data.datasets[0].data = []
         configD.data.datasets[0].data.push( data.data.boletosByDeltadias.filter(x => { //Día
             let h = parseInt(x.createdDate.split('T')[1].split(':')[0])
-            return h > 7 && h < 21
+            return h > 7 && h < 20
         } ).length )
         configD.data.datasets[0].data.push( data.data.boletosByDeltadias.length - configD.data.datasets[0].data[0] )
         diaChart.update()
@@ -240,26 +240,26 @@ function getBoletos(d){
         configM.data.labels = configM.data.labels.reverse()
         configM.data.datasets[0].data = configM.data.datasets[0].data.reverse()
         mesesChart.update()
-        //Día femenino
-        configGF.data.datasets[0].data[0] = data.data.boletosByDeltadias.filter(x => { //Día
+        //Género en el día
+        configDia.data.datasets[0].data[0] = data.data.boletosByDeltadias.filter(x => { //Masculino
             let h = parseInt(x.createdDate.split('T')[1].split(':')[0])
-            return h > 7 && h < 21 && x.genero === '1'
+            return h > 7 && h < 20 && x.genero === '0'
         } ).length
-        configGF.data.datasets[0].data[1] = data.data.boletosByDeltadias.filter(x => { //Noche
+        configDia.data.datasets[0].data[1] = data.data.boletosByDeltadias.filter(x => { //Femenino
             let h = parseInt(x.createdDate.split('T')[1].split(':')[0])
-            return (h >= 21 || h <= 7) && x.genero === '1'
+            return h > 7 && h < 20 && x.genero === '1'
         } ).length
         diaFChart.update()
-        //Día masculino
-        configGM.data.datasets[0].data[0] = data.data.boletosByDeltadias.filter(x => { //Día
+        //Género a la noche
+        configNoche.data.datasets[0].data[0] = data.data.boletosByDeltadias.filter(x => { //Masculino
             let h = parseInt(x.createdDate.split('T')[1].split(':')[0])
-            return h > 7 && h < 21 && x.genero === '0'
+            return (h >= 20 || h <= 7) && x.genero === '0'
         } ).length
-        configGM.data.datasets[0].data[1] = data.data.boletosByDeltadias.filter(x => { //Noche
+        configNoche.data.datasets[0].data[1] = data.data.boletosByDeltadias.filter(x => { //
             let h = parseInt(x.createdDate.split('T')[1].split(':')[0])
-            return (h >= 21 || h <= 7) && x.genero === '0'
+            return (h >= 20 || h <= 7) && x.genero === '1'
         } ).length
-        diaMChart.update()
+        nocheGChart.update()
 
     });
 }
