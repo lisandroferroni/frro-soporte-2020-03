@@ -62,5 +62,7 @@ if __name__ == '__main__':
 # [] Paradas con más boletos
 # [] Línea con más boletos
 # [X] Gráfico porcentaje día vs noche por boletos gral.
-# [] Borrar text Cuando llegó
-# [] Cuadro horario fix time format.
+# [X] Borrar text Cuando llegó
+# [X] Cuadro horario fix time format.
+# [] Agregar diagrama de la base al informe.
+# [] Número de parada incorrecto
