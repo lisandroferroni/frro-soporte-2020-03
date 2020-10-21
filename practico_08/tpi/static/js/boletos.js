@@ -41,7 +41,7 @@ var configT = {
         }],
         labels: [
             'Medio boleto',
-            'Diferencial o Monedas',
+            'Pase',
             'Normal',
             'Jubilado'
         ]
@@ -211,8 +211,8 @@ function getBoletos(d){
         generoChart.update();
         //Tipo
         configT.data.datasets[0].data = []
-        configT.data.datasets[0].data.push( data.data.boletosByDeltadias.filter(x => x.tipo === 'Medio boleto').length )
-        configT.data.datasets[0].data.push( data.data.boletosByDeltadias.filter(x => x.tipo === 'Diferencial o Monedas').length )
+        configT.data.datasets[0].data.push( data.data.boletosByDeltadias.filter(x => x.tipo === 'Medio').length )
+        configT.data.datasets[0].data.push( data.data.boletosByDeltadias.filter(x => x.tipo === 'Pase').length )
         configT.data.datasets[0].data.push( data.data.boletosByDeltadias.filter(x => x.tipo === 'Normal').length )
         configT.data.datasets[0].data.push( data.data.boletosByDeltadias.filter(x => x.tipo === 'Jubilado').length )
         tipoChart.update()
